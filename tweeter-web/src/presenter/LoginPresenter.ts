@@ -13,35 +13,39 @@ export interface LoginView extends LoadingView {
 }
 
 export class LoginPresenter extends Presenter<LoginView>{
-
   private service: UserService = new UserService;
 
-  public async login (
-    alias: string,
-    password: string
-    ): Promise<[User, AuthToken]>{
-        return this. service.login(alias, password);
-    };
+  public async login (alias: string, password: string): Promise<[User, AuthToken]>{
+    return this.service.login(alias, password);
+  };
 
-
-  public async doLogin () {
-
+  public async doLogin (aliasInput?: string, passwordInput?: string) {
     try {
-      this.view.setIsLoading(true);
+      let alias: string;
+      let password: string;
+      if( !aliasInput || !passwordInput){
+        alias = this.view.alias;
+        password = this.view.password;
+      }
+      else{
+        alias = aliasInput;
+        password = passwordInput;
+      }
 
+      this.view.setIsLoading(true);
+      
       await this.doFailureReportingOperation(async()=>{
-        const [user, authToken] = await this.login(this.view.alias, this.view.password);
+        const [user, authToken] = await this.login(alias, password);
         this.view.updateUserInfo(user, user, authToken, this.view.rememberMe);
         if (!!this.view.originalURL) {
           this.view.navigate(this.view.originalURL);
         } else {
           this.view.navigate(`/feed/${user.alias}`);
         }
-      }, "log in user")
+      }, "log in user");
 
     } finally {
       this.view.setIsLoading(false);
     }
   };
-
 }

@@ -70,7 +70,7 @@ const StatusItemScroller = (props: Props) => {
         dataLength={items.length}
         next={() => loadMoreItems(lastItem)}
         hasMore={hasMoreItems}
-        loader={<h4>Loading...</h4>}
+        loader={<h4></h4>}
       >
         {items.map((item, index) => (
           <div

@@ -37,6 +37,25 @@ export class RegisterPresenter extends Presenter<RegisterView>{
       ): Promise<[User, AuthToken]> {
         return this.service.register(firstName, lastName, alias, password, userImageBytes, imageFileExtension)
     }
+    public async doRegister ()   {
+      try {
+        this.view.setIsLoading(true);
+        await this.doFailureReportingOperation( async() => {
+          const [user, authToken] = await this.register(
+            this.view.firstName,
+            this.view.lastName,
+            this.view.alias,
+            this.view.password,
+            this.view.imageBytes,
+            this.view.imageFileExtension
+          );
+          this.view.updateUserInfo(user, user, authToken, this.view.rememberMe);
+          this.view.navigate(`/feed/${user.alias}`);
+        }, "register user");
+      } finally {
+        this.view.setIsLoading(false);
+      }
+    };
 
     public handleImageFile = (file: File | undefined) => {
         if (file) {
@@ -81,24 +100,6 @@ export class RegisterPresenter extends Presenter<RegisterView>{
     };
 
     
-    public doRegister = async () => {
-        try {
-          this.view.setIsLoading(true);
-          await this.doFailureReportingOperation( async() => {
-            const [user, authToken] = await this.register(
-              this.view.firstName,
-              this.view.lastName,
-              this.view.alias,
-              this.view.password,
-              this.view.imageBytes,
-              this.view.imageFileExtension
-            );
-            this.view.updateUserInfo(user, user, authToken, this.view.rememberMe);
-            this.view.navigate(`/feed/${user.alias}`);
-          }, "register user");
-        } finally {
-          this.view.setIsLoading(false);
-        }
-    };
+    
 
 }

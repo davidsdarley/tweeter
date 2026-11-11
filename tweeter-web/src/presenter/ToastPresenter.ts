@@ -7,8 +7,10 @@ export interface LoadingView extends MessageView{
 
 export abstract class ToastPresenter<V extends LoadingView> extends Presenter<V>{
 
-    protected async doToastOperation (event: React.MouseEvent, operation: () => Promise<void>, operationDescription: string, toastMessage?: string): Promise<void> {
-        event.preventDefault();
+    protected async doToastOperation (event: React.MouseEvent | null, operation: () => Promise<void>, operationDescription: string, toastMessage?: string): Promise<void> {
+        if(event){
+            event.preventDefault();
+        }
         var toast = "";
         try {
             this.view.setIsLoading(true);
@@ -20,8 +22,9 @@ export abstract class ToastPresenter<V extends LoadingView> extends Presenter<V>
             if (toastMessage){
                 this.view.deleteMessage(toast);
             }
+
             this.view.setIsLoading(false);
-    }
+        }
     };
 }
 

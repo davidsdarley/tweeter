@@ -11,6 +11,7 @@ import { LoginPresenter } from "../../../presenter/LoginPresenter";
 
 interface Props {
   originalUrl?: string;
+  presenter?: LoginPresenter;
 }
 
 const Login = (props: Props) => {
@@ -27,7 +28,7 @@ const Login = (props: Props) => {
 
   const presenterRef = useRef<LoginPresenter | null>(null);
   if (!presenterRef.current) {
-    presenterRef.current = new LoginPresenter(view);
+    presenterRef.current = props.presenter ?? new LoginPresenter(view);
   }
 
   const checkSubmitButtonStatus = (): boolean => {
@@ -41,7 +42,7 @@ const Login = (props: Props) => {
   };
 
   const doLogin = async () => {
-    presenterRef.current!.doLogin();
+    presenterRef.current!.doLogin(alias, password);
   };
 
   const inputFieldFactory = () => {

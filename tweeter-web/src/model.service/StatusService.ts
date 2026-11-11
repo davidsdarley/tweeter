@@ -20,5 +20,10 @@ export class StatusService {
         // TODO: Replace with the result of calling server
         return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
     };
+    public async postStatus(newStatus: Status, authToken: AuthToken): Promise<void>{
+        return new Promise((f) => setTimeout(f, 2000));
+    
+        // TODO: Call the server to post the status
+      };
     
 }

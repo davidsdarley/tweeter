@@ -4,7 +4,11 @@ import { useMessageActions } from "../toaster/MessageHooks";
 import { useUserInfo } from "../userInfo/UserInfoHooks";
 import { PostStatusPresenter, PostStatusView } from "../../presenter/PostStatusPresenter";
 
-const PostStatus = () => {
+interface Props {
+  presenter?: PostStatusPresenter;
+}
+
+const PostStatus = (props: Props) => {
   const {displayInfoMessage, displayErrorMessage, deleteMessage} = useMessageActions()
 
   const { currentUser, authToken } = useUserInfo();
@@ -18,8 +22,6 @@ const PostStatus = () => {
   const view: PostStatusView = {
     setIsLoading: setIsLoading,
     displayInfoMessage: displayInfoMessage,
-    authToken: authToken,
-    currentUser: currentUser,
     getPost: getPost,
     setPost: setPost,
     displayErrorMessage: displayErrorMessage,
@@ -29,11 +31,11 @@ const PostStatus = () => {
 
   const presenterRef = useRef<PostStatusPresenter | null>(null);
   if (!presenterRef.current) {
-    presenterRef.current = new PostStatusPresenter(view);
+    presenterRef.current = props.presenter ?? new PostStatusPresenter(view);
   }
 
   const submitPost = async (event: React.MouseEvent) => {
-    presenterRef.current!.submitPost(event)
+    presenterRef.current!.submitPost(event, authToken!, currentUser!)
   };
 
   const clearPost = (event: React.MouseEvent) => {
@@ -41,7 +43,7 @@ const PostStatus = () => {
   };
 
   const checkButtonStatus: (post:string) => boolean = (post:string) => {
-    return presenterRef.current!.checkButtonStatus(post);
+    return presenterRef.current!.checkButtonStatus(post, authToken!, currentUser!);
   };
 
   return (
@@ -49,6 +51,7 @@ const PostStatus = () => {
       <div className="form-group mb-3">
         <textarea
           className="form-control"
+          aria-label="post"
           id="postStatusTextArea"
           rows={10}
           placeholder="What's on your mind?"
