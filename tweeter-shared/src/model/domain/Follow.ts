@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { User } from "tweeter-shared/src/model/domain/User";
 
 export class Follow {
     private _follower: User;

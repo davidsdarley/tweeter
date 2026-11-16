@@ -1,5 +1,5 @@
-import { PostSegment, Type } from "./PostSegment";
-import { User } from "./User";
+import { PostSegment, Type } from "tweeter-shared/src/model/domain/PostSegment";
+import { User } from "tweeter-shared/src/model/domain/User";
 import { format } from "date-fns";
 
 export class Status {
