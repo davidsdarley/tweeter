@@ -17,7 +17,7 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doPost<
       PagedUserItemRequest,
       PagedUserItemResponse
-    >(request, "/followee/get");
+    >(request, "/followees/get");
 
     // Convert the UserDto array returned by ClientCommunicator to a User array
     const items: User[] | null =
