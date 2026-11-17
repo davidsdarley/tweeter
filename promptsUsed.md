@@ -171,3 +171,43 @@ Done when:
 
 If the existing implementation looks inconsistent or wrong, stop and ask
 instead of fixing it.
+
+## TASK 5
+Move follow and unfollow logic from tweeter-web to tweeter-server/src/model/service/FollowService.ts.
+
+Objective: transfer the functionality of follow and unfollow from UserInfoPresenter to tweeter-server/src/model/service/FollowService.ts. tweeter-web/src/model.service/FollowService gets new follow() and unfollow() methods, which UserInfoPresenter should call in order to access the functionality in the server.
+Each function should set up the same layers as the Status service classes, server method → new Lambda → template.yaml (both the API path block and the function block) → ServerFacade.method → client FollowService calls ServerFacade for the replaced methods instead of FakeData. Behavior and output must match what the client gets from FakeData today.
+
+Read first:
+- tweeter-web/src/presenter/UserInfoPresenter.ts
+- tweeter-web/src/model/service/FollowService.ts
+- tweeter-server/src/lambda/status/GetFeedLambda.ts
+- tweeter-server/src/model/service/StatusService.ts
+- tweeter-server/template.yaml
+- tweeter-server/test/lambda/GetFeedLambda.test.ts
+- tweeter-web/src/network/ServerFacade.ts
+- tweeter-shared/src/model/net/request/PagedUserItemRequest.ts
+- tweeter-shared/src/model/dto/UserDto.ts
+- tweeter-shared/src/model/domain/User.ts
+- tweeter-shared/src/util/FakeData.ts
+- tweeter-shared/src/index.ts
+
+Constraints:
+- Function ID and FunctionName: follow the conventions in the template.yaml file as they currently exist
+- Lambda file: tweeter-server/src/lambda/follow/<methodName>.ts, exporting `handler`
+- Put server logic in tweeter-server/src/model/service/FollowService.ts.
+- Do not modify tweeter-shared (ask me first if you think a change is needed).
+- Mirror the feed code structure and naming; don't refactor feed
+- Other than UserInfoPresenter.ts, do not change presenters, views, or existing tests (ask me if you think such a change is necessary)
+- Do not add npm dependencies
+- Do not run sam, aws, or deploy commands
+
+Done when:
+- You have written new tweeter-server/test/lambda/<method>.test.ts for both follow and unfollow, covering successful requests for each method.
+- tweeter-web/test/network/ServerFacade.test.ts is updated to test both the follow and unfollow methods.
+- In tweeter-shared: npm run build with no build issues
+- In tweeter-server: npm run build and npm test pass
+- In tweeter-web: npx tsc --noEmit passes
+
+If the existing implementation looks inconsistent or wrong, stop and ask
+instead of fixing it.
