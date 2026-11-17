@@ -210,3 +210,40 @@ Done when:
 - In tweeter-web: npx tsc --noEmit passes
 
 If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
+
+## TASK 6
+Move postStatus logic from tweeter-web to tweeter-server/src/model/service/StatusService.ts.
+
+Objective: transfer the functionality of postStatus from tweeter-web/src/model.service/StatusService.ts to tweeter-server/src/model/service/StatusService.ts. 
+The function should set up the same layers as other StatusService methods, server method → new Lambda → template.yaml (both the API path block and the function block) → ServerFacade.method → client StatusService calls ServerFacade for the replaced methods instead of FakeData. Behavior and output must match what the client gets from FakeData today.
+
+Read first:
+- tweeter-web/src/model.service/StatusService.ts
+- tweeter-server/src/lambda/status/GetFeedLambda.ts
+- tweeter-server/src/model/service/StatusService.ts
+- tweeter-server/template.yaml
+- tweeter-web/src/network/ServerFacade.ts
+- tweeter-shared/src/model/net/request/PagedStatusItemRequest.ts
+- tweeter-shared/src/model/dto/StatusDto.ts
+- tweeter-shared/src/model/domain/Status.ts
+- tweeter-shared/src/util/FakeData.ts
+- tweeter-shared/src/index.ts
+
+Constraints:
+- Function ID and FunctionName: follow the conventions in the template.yaml file as they currently exist
+- Lambda file: tweeter-server/src/lambda/status/<methodName>.ts, exporting `handler`
+- Put server logic in tweeter-server/src/model/service/StatusService.ts.
+- Do not modify tweeter-shared (ask me first if you think a change is needed).
+- Mirror the feed code structure and naming; don't refactor feed
+- Do not change presenters, views, or existing tests (ask me if you think such a change is necessary)
+- Do not add npm dependencies
+- Do not run sam, aws, or deploy commands
+
+Done when:
+- You have written new tweeter-server/test/lambda/<method>.test.ts for postStatus, covering a successful request for the method.
+- tweeter-web/test/network/ServerFacade.test.ts is updated to test the updated postStatus method.
+- In tweeter-shared: npm run build with no build issues
+- In tweeter-server: npm run build and npm test pass
+- In tweeter-web: npx tsc --noEmit passes
+
+If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
