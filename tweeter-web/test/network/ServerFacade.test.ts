@@ -3,8 +3,10 @@ import "isomorphic-fetch";
 import { ServerFacade } from "../../src/network/ServerFacade";
 import {
   FakeData,
+  IsFollowerRequest,
   PagedStatusItemRequest,
   PagedUserItemRequest,
+  TweeterRequest,
   User,
 } from "tweeter-shared";
 
@@ -123,5 +125,55 @@ describe("ServerFacade integration", () => {
     });
 
     expect(statuses).toHaveLength(3);
+  });
+
+  const userRequest: TweeterRequest = {
+    token: "fake-token",
+    userAlias: "@allen",
+  };
+
+  it("getUser returns the user FakeData provides", async () => {
+    const expectedUser = FakeData.instance.findUserByAlias("@allen");
+
+    const user = await serverFacade.getUser(userRequest);
+
+    expect(user).toBeInstanceOf(User);
+    expect(user?.toDto()).toEqual(expectedUser?.toDto());
+  });
+
+  it("getUser returns null for an unknown alias", async () => {
+    const user = await serverFacade.getUser({
+      ...userRequest,
+      userAlias: "@no-such-user",
+    });
+
+    expect(user).toBeNull();
+  });
+
+  it("getFolloweeCount returns an integer count between 1 and 10", async () => {
+    const count = await serverFacade.getFolloweeCount(userRequest);
+
+    expect(Number.isInteger(count)).toBe(true);
+    expect(count).toBeGreaterThanOrEqual(1);
+    expect(count).toBeLessThanOrEqual(10);
+  });
+
+  it("getFollowerCount returns an integer count between 1 and 10", async () => {
+    const count = await serverFacade.getFollowerCount(userRequest);
+
+    expect(Number.isInteger(count)).toBe(true);
+    expect(count).toBeGreaterThanOrEqual(1);
+    expect(count).toBeLessThanOrEqual(10);
+  });
+
+  it("getIsFollowerStatus returns a boolean", async () => {
+    const request: IsFollowerRequest = {
+      ...userRequest,
+      selectedUserAlias: "@amy",
+    };
+
+    const isFollower = await serverFacade.getIsFollowerStatus(request);
+
+    expect(typeof isFollower).toBe("boolean");
   });
 });

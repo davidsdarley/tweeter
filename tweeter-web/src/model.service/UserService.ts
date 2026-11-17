@@ -1,26 +1,38 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import { AuthToken, FakeData, User } from "tweeter-shared";
 import { Buffer } from "buffer";
+import { ServerFacade } from "../network/ServerFacade";
 
 export class UserService {
-    
+  private serverFacade = new ServerFacade();
+
   public async getUser  (authToken: AuthToken, alias: string): Promise<User | null> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.findUserByAlias(alias);
+    return this.serverFacade.getUser({
+      token: authToken.token,
+      userAlias: alias
+    });
   };
 
   public async getFolloweeCount (authToken: AuthToken,alias: string,): Promise<number> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getFolloweeCount(alias);
+    return this.serverFacade.getFolloweeCount({
+      token: authToken.token,
+      userAlias: alias
+    });
   };
 
   public async getIsFollowerStatus( authToken: AuthToken, user: User, selectedUser: User): Promise<boolean> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.isFollower();
+    return this.serverFacade.getIsFollowerStatus({
+      token: authToken.token,
+      userAlias: user.alias,
+      selectedUserAlias: selectedUser.alias
+    });
   };
 
   public async getFollowerCount (authToken: AuthToken, userAlias: string): Promise<number> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getFollowerCount(userAlias);
+    return this.serverFacade.getFollowerCount({
+      token: authToken.token,
+      userAlias: userAlias
+    });
   };
   
   public async register (

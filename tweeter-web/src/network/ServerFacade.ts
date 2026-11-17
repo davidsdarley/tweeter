@@ -1,12 +1,16 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import {
+  GetCountResponse,
+  GetUserResponse,
+  IsFollowerRequest,
+  IsFollowerResponse,
   PagedStatusItemRequest,
   PagedStatusItemResponse,
   PagedUserItemRequest,
   PagedUserItemResponse,
   Status,
+  TweeterRequest,
   User,
-  UserDto,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
@@ -117,6 +121,67 @@ export class ServerFacade {
       } else {
         return [items, response.hasMore];
       }
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async getUser(request: TweeterRequest): Promise<User | null> {
+    const response = await this.clientCommunicator.doPost<
+      TweeterRequest,
+      GetUserResponse
+    >(request, "/user/get");
+
+    // Handle errors
+    if (response.success) {
+      // A null user means no user has that alias (same as FakeData.findUserByAlias)
+      return response.user ? User.fromDto(response.user) : null;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async getFolloweeCount(request: TweeterRequest): Promise<number> {
+    const response = await this.clientCommunicator.doPost<
+      TweeterRequest,
+      GetCountResponse
+    >(request, "/followee/count");
+
+    // Handle errors
+    if (response.success) {
+      return response.count;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async getFollowerCount(request: TweeterRequest): Promise<number> {
+    const response = await this.clientCommunicator.doPost<
+      TweeterRequest,
+      GetCountResponse
+    >(request, "/follower/count");
+
+    // Handle errors
+    if (response.success) {
+      return response.count;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async getIsFollowerStatus(request: IsFollowerRequest): Promise<boolean> {
+    const response = await this.clientCommunicator.doPost<
+      IsFollowerRequest,
+      IsFollowerResponse
+    >(request, "/follower/status");
+
+    // Handle errors
+    if (response.success) {
+      return response.isFollower;
     } else {
       console.error(response);
       throw new Error(response.message ?? undefined);
