@@ -216,4 +216,10 @@ describe("ServerFacade integration", () => {
       expect(count).toBeLessThanOrEqual(10);
     }
   });
+
+  it("logout resolves without error for a valid token", async () => {
+    await expect(
+      serverFacade.logout({ token: "fake-token", userAlias: "" })
+    ).resolves.toBeUndefined();
+  });
 });

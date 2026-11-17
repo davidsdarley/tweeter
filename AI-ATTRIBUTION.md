@@ -42,3 +42,11 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Move postStatus from the client StatusService to the server StatusService end to end (shared PostStatusRequest, PostStatusLambda, template.yaml /status/post blocks, ServerFacade.postStatus, client StatusService calling the server), mirroring the feed code, with Lambda and ServerFacade tests.
 - Review: server facade follows the same general format as all the previous methods. Lambda looks good. server StatusService just resolves the promise immediately but that's what we want right now. New request appropriately uses the status dto. Server tests pass. Behavior the same after deploying. Changes accepted.
+## 2026-11-16: tweeter-shared/src/model/net/request/LogoutRequest.ts (new file), tweeter-shared/src/index.ts, tweeter-server/src/model/service/UserService.ts, tweeter-server/src/lambda/user/LogoutLambda.ts (new file), tweeter-server/test/lambda/LogoutLambda.test.ts (new file), tweeter-server/template.yaml, tweeter-web/src/network/ServerFacade.ts, tweeter-web/src/model.service/UserService.ts, tweeter-web/test/network/ServerFacade.test.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Move logout from the client UserService to the server UserService end to end (shared LogoutRequest, LogoutLambda, template.yaml /user/logout blocks, ServerFacade.logout, client UserService calling the server), mirroring the feed code, with Lambda and ServerFacade tests.
+- Review: immediately saw an issue with the new LogoutRequest it made and went back to agent.
+## 2026-11-16: tweeter-shared/src/model/net/request/LogoutRequest.ts (deleted), tweeter-shared/src/index.ts, tweeter-server/src/lambda/user/LogoutLambda.ts, tweeter-server/test/lambda/LogoutLambda.test.ts, tweeter-web/src/network/ServerFacade.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Since LogoutRequest added nothing to TweeterRequest, remove it and refactor all code that used it to use TweeterRequest directly.
+- Review: ServerFacade sends its request with nothing but a normal tweeter request and response, good for minimal operation. All changes are pretty much just moving things to other files, and all look good. Behavior is all the same after deployment. Changes accepted.

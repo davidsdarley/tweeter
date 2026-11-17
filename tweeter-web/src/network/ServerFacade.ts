@@ -237,4 +237,17 @@ export class ServerFacade {
       throw new Error(response.message ?? undefined);
     }
   }
+
+  public async logout(request: TweeterRequest): Promise<void> {
+    const response = await this.clientCommunicator.doPost<
+      TweeterRequest,
+      TweeterResponse
+    >(request, "/user/logout");
+
+    // Handle errors
+    if (!response.success) {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
 }

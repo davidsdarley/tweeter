@@ -7,4 +7,9 @@ export class UserService {
         const user = FakeData.instance.findUserByAlias(alias);
         return user ? user.toDto() : null;
     };
+
+    public async logout(token: string): Promise<void> {
+        // TODO: Call the database to invalidate the auth token
+        return Promise.resolve();
+    };
 }
