@@ -57,9 +57,7 @@ export class UserService {
     return [user, FakeData.instance.authToken];
   };
 
-
   public async login(alias: string, password: string): Promise<[User, AuthToken]> {
-    console.log("\n\n\n\n\n\nRUNNING THE LOGIN SERVICE\n\n\n\n\n\n\n\n\n");
     // TODO: Replace with the result of calling the server
     const user = FakeData.instance.firstUser;
     if (user === null) {
