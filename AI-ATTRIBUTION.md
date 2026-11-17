@@ -10,4 +10,7 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Add the getFollowers feature end to end (Lambda, template.yaml path and function blocks, ServerFacade.getMoreFollowers, client FollowService calling the server), mirroring getFollowees, with Lambda tests.
 - Review: template.yaml changes look good. ServerFacade changes are good, just replacing their own fakedata calls. Changes appear to be within scope and complete the task. All tests passed. Site builds, opens, and appears to behave the same. Changes accepted.
-
+## 2026-11-16: tweeter-web/test/network/ServerFacade.test.ts (new file)
+- Tool: Claude (claude.ai chat)
+- Task: Wrote integration tests for ServerFacade's getMoreFollowers and getMoreFollowees, checking results against FakeData, paging with lastItem, and page size.
+- Review: Tests appear to be testing what they say they do. I am able to break the tests be changing expected values so they are testing real things. Manual testing agrees they are working. Changes accepted.
