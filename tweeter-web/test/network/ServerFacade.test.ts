@@ -176,4 +176,30 @@ describe("ServerFacade integration", () => {
 
     expect(typeof isFollower).toBe("boolean");
   });
+
+  it("follow returns integer follower and followee counts between 1 and 10", async () => {
+    const [followerCount, followeeCount] = await serverFacade.follow({
+      ...userRequest,
+      userAlias: "@amy",
+    });
+
+    for (const count of [followerCount, followeeCount]) {
+      expect(Number.isInteger(count)).toBe(true);
+      expect(count).toBeGreaterThanOrEqual(1);
+      expect(count).toBeLessThanOrEqual(10);
+    }
+  });
+
+  it("unfollow returns integer follower and followee counts between 1 and 10", async () => {
+    const [followerCount, followeeCount] = await serverFacade.unfollow({
+      ...userRequest,
+      userAlias: "@amy",
+    });
+
+    for (const count of [followerCount, followeeCount]) {
+      expect(Number.isInteger(count)).toBe(true);
+      expect(count).toBeGreaterThanOrEqual(1);
+      expect(count).toBeLessThanOrEqual(10);
+    }
+  });
 });

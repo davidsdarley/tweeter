@@ -25,6 +25,7 @@ export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 export type { GetUserResponse } from "./model/net/response/GetUserResponse";
 export type { GetCountResponse } from "./model/net/response/GetCountResponse";
 export type { IsFollowerResponse } from "./model/net/response/IsFollowerResponse";
+export type { FollowResponse } from "./model/net/response/FollowResponse";
 
 // Fake data
 export { FakeData } from "./util/FakeData";

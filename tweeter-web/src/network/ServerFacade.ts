@@ -1,5 +1,6 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import {
+  FollowResponse,
   GetCountResponse,
   GetUserResponse,
   IsFollowerRequest,
@@ -182,6 +183,40 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       return response.isFollower;
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async follow(
+    request: TweeterRequest,
+  ): Promise<[followerCount: number, followeeCount: number]> {
+    const response = await this.clientCommunicator.doPost<
+      TweeterRequest,
+      FollowResponse
+    >(request, "/user/follow");
+
+    // Handle errors
+    if (response.success) {
+      return [response.followerCount, response.followeeCount];
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async unfollow(
+    request: TweeterRequest,
+  ): Promise<[followerCount: number, followeeCount: number]> {
+    const response = await this.clientCommunicator.doPost<
+      TweeterRequest,
+      FollowResponse
+    >(request, "/user/unfollow");
+
+    // Handle errors
+    if (response.success) {
+      return [response.followerCount, response.followeeCount];
     } else {
       console.error(response);
       throw new Error(response.message ?? undefined);

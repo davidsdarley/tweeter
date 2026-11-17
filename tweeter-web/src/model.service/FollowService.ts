@@ -21,8 +21,6 @@ export class FollowService {
         
       };
 
-
-
       public async loadMoreFollowers(
         authToken: AuthToken,
         userAlias: string,
@@ -34,6 +32,26 @@ export class FollowService {
             userAlias: userAlias,
             pageSize: pageSize,
             lastItem: lastItem ? lastItem.toDto() : null
+        });
+      };
+
+      public async follow(
+        authToken: AuthToken,
+        userToFollow: User
+      ): Promise<[followerCount: number, followeeCount: number]> {
+        return this.serverFacade.follow({
+            token: authToken.token,
+            userAlias: userToFollow.alias
+        });
+      };
+
+      public async unfollow(
+        authToken: AuthToken,
+        userToUnfollow: User
+      ): Promise<[followerCount: number, followeeCount: number]> {
+        return this.serverFacade.unfollow({
+            token: authToken.token,
+            userAlias: userToUnfollow.alias
         });
       };
 }

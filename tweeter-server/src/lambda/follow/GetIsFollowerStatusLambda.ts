@@ -1,12 +1,12 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { IsFollowerRequest } from "tweeter-shared";
 import { IsFollowerResponse } from "tweeter-shared";
-import { UserService } from "../../model/service/UserService";
+import { FollowService } from "../../model/service/FollowService";
 
 export const handler = async (request: IsFollowerRequest): Promise<IsFollowerResponse> => {
 
-    const userService = new UserService();
-    const isFollower = await userService.getIsFollowerStatus(request.token, request.userAlias, request.selectedUserAlias);
+    const followService = new FollowService();
+    const isFollower = await followService.getIsFollowerStatus(request.token, request.userAlias, request.selectedUserAlias);
 
     return {
         success: true,

@@ -212,6 +212,32 @@ Resources:
                 responses: *commonAmazonResponses
               responses: *commonSwaggerResponses
 
+          /user/follow:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${followFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+
+          /user/unfollow:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${unfollowFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+
           /user/create:  ##### TODO: Set endpoint URL
             post:
               consumes: *commonConsumes
@@ -337,7 +363,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: getFolloweeCountFunction
-      Handler: lambda/user/GetFolloweeCountLambda.handler
+      Handler: lambda/follow/GetFolloweeCountLambda.handler
       Policies: *commonPolicies
       Events:
         PostApi:
@@ -351,7 +377,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: getFollowerCountFunction
-      Handler: lambda/user/GetFollowerCountLambda.handler
+      Handler: lambda/follow/GetFollowerCountLambda.handler
       Policies: *commonPolicies
       Events:
         PostApi:
@@ -365,7 +391,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: getIsFollowerStatusFunction
-      Handler: lambda/user/GetIsFollowerStatusLambda.handler
+      Handler: lambda/follow/GetIsFollowerStatusLambda.handler
       Policies: *commonPolicies
       Events:
         PostApi:
@@ -373,6 +399,34 @@ Resources:
           Properties:
             RestApiId: !Ref tweeterApi
             Path: /follower/status
+            Method: POST
+
+  followFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: followFunction
+      Handler: lambda/follow/FollowLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/follow
+            Method: POST
+
+  unfollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: unfollowFunction
+      Handler: lambda/follow/UnfollowLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/unfollow
             Method: POST
 
   userCreateFunction:  ##### TODO: Set function name

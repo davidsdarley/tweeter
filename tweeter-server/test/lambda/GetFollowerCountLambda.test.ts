@@ -1,7 +1,7 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 
 import { describe, expect, it } from "@jest/globals";
-import { handler } from "../../src/lambda/user/GetFollowerCountLambda";
+import { handler } from "../../src/lambda/follow/GetFollowerCountLambda";
 import { TweeterRequest } from "tweeter-shared";
 
 describe("GetFollowerCountLambda", () => {
