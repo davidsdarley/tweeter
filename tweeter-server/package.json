@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
     "build": "npm run compile",
     "compile": "npm run clean && tsc",
     "clean": "rm -rf dist"
@@ -16,5 +17,10 @@
     "sam": "^0.0.7",
     "tweeter-shared": "file:../tweeter-shared",
     "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15"
   }
 }

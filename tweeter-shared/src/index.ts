@@ -1,10 +1,10 @@
 
 //Domain classes
-export { Follow } from "tweeter-shared/src/model/domain/Follow";
-export { PostSegment, Type } from "tweeter-shared/src/model/domain/PostSegment";
-export { Status } from "tweeter-shared/src/model/domain/Status";
-export { User } from "tweeter-shared/src/model/domain/User";
-export { AuthToken } from "tweeter-shared/src/model/domain/AuthToken";
+export { Follow } from "./model/domain/Follow";
+export { PostSegment, Type } from "./model/domain/PostSegment";
+export { Status } from "./model/domain/Status";
+export { User } from "./model/domain/User";
+export { AuthToken } from "./model/domain/AuthToken";
 
 
 // DTOs

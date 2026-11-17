@@ -104,8 +104,9 @@ Resources:
           #
           # Endpoint definitions
           #
+          
 
-          /user/get:  ##### TODO: Change "/user/get" to the actual endpoint URL
+          /followees/get: 
             post:
               consumes: *commonConsumes
               produces: *commonProduces
@@ -115,7 +116,7 @@ Resources:
                 uri:
                   ##### TODO: Change "userGetFunction" to the actual function name. (Don't delete the $, {}, or .Arn suffix.)
                   ##### The function name must agree with the "Web API Lambda functions" section below.
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userGetFunction.Arn}/invocations
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getFolloweesFunction.Arn}/invocations
                 requestTemplates: *commonRequestTemplates
                 responses: *commonAmazonResponses
               responses: *commonSwaggerResponses
@@ -167,15 +168,13 @@ Resources:
   # Web API Lambda functions
   #
 
-  ##### TODO: Change "userGetFunction" to the actual function name.
   ##### It must match the function name in the "Endpoint definitons" section above.
-  userGetFunction:
+  getFolloweesFunction:
     Type: AWS::Serverless::Function
     Properties:
-      ##### TODO: Change "userGetFunction" to the actual function name.
-      FunctionName: userGetFunction
+      FunctionName: getFolloweesFunction
       ##### TODO: Modify Handler property to match your code. This identifies the exact function that the lambda should run.
-      Handler: handlers/users/UserGetHandler.userGetHandler
+      Handler: lambda/follow/GetFolloweesLambda.handler
       Policies: *commonPolicies
       Events:
         PostApi:
@@ -184,7 +183,7 @@ Resources:
             RestApiId: !Ref tweeterApi
             ##### TODO: Modify the Path property to the actual endpoint URL.
             ##### It must match the URL in the "Endpoint definitions" section above.
-            Path: /user/get
+            Path: /followees/get
             Method: POST
 
   userCreateFunction:  ##### TODO: Set function name

@@ -1,4 +1,6 @@
 {
+  "include": ["src"], // only care about src, not tests pls
+
   "compilerOptions": {
     "target": "es2022",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "module": "commonjs", 
