@@ -12,9 +12,11 @@ export type { UserDto } from "./model/dto/UserDto";
 
 // Requests
 export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
+export type { TweeterRequest } from "./model/net/request/TweeterRequest";
 
 // Responses
 export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse";
+export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 
 // Fake data
 export { FakeData } from "./util/FakeData";
