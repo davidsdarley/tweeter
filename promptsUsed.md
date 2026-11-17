@@ -209,5 +209,4 @@ Done when:
 - In tweeter-server: npm run build and npm test pass
 - In tweeter-web: npx tsc --noEmit passes
 
-If the existing implementation looks inconsistent or wrong, stop and ask
-instead of fixing it.
+If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
