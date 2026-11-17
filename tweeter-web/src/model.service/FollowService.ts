@@ -1,4 +1,5 @@
-import { AuthToken, FakeData, User } from "tweeter-shared";
+// AI-assisted: see AI-ATTRIBUTION.md
+import { AuthToken, User } from "tweeter-shared";
 import { ServerFacade } from "../network/ServerFacade";
 
 export class FollowService {
@@ -32,6 +33,11 @@ export class FollowService {
         lastItem: User | null
       ): Promise<[User[], boolean]> {
         // TODO: Replace with the result of calling server
-        return FakeData.instance.getPageOfUsers(lastItem, pageSize, userAlias);
+        return this.serverFacade.getMoreFollowers({
+            token: authToken.token,
+            userAlias: userAlias,
+            pageSize: pageSize,
+            lastItem: lastItem ? lastItem.toDto() : null
+        });
       };
 }
