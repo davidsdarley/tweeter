@@ -22,3 +22,7 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Add Status.toDto and Status.fromDto (like User's) and replace the hand-written Status/StatusDto conversions in the getFeed code and tests with them.
 - Review: Tests are virtually the same as the previous ones and appear to test the appropriate things. Changes accepted.
+## 2026-11-16: tweeter-server/src/model/service/StatusService.ts, tweeter-server/src/lambda/status/GetStoryLambda.ts (new file), tweeter-server/test/lambda/GetStoryLambda.test.ts (new file), tweeter-server/template.yaml, tweeter-web/src/network/ServerFacade.ts, tweeter-web/src/model.service/StatusService.ts, tweeter-web/test/network/ServerFacade.test.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Add the getStory feature end to end (server StatusService.loadMoreStoryItems, GetStoryLambda, template.yaml /story/get blocks, ServerFacade.getMoreStoryItems, client StatusService calling the server), mirroring getFeed, with Lambda and ServerFacade tests.
+- Review: follows same route as feed. Code logic is good. Tests do what they say and break when given bad info. Site works the same when tested. All integration and unit tests passed. Changes accepted.

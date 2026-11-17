@@ -100,4 +100,28 @@ describe("ServerFacade integration", () => {
 
     expect(statuses).toHaveLength(3);
   });
+
+  it("getMoreStoryItems returns the next page with no overlap", async () => {
+    const [firstPage] = await serverFacade.getMoreStoryItems(firstFeedPageRequest);
+    const lastStatus = firstPage[firstPage.length - 1];
+
+    const [secondPage] = await serverFacade.getMoreStoryItems({
+      ...firstFeedPageRequest,
+      lastItem: lastStatus.toDto(),
+    });
+
+    expect(secondPage.length).toBeGreaterThan(0);
+    for (const status of secondPage) {
+      expect(firstPage.some((s) => s.equals(status))).toBe(false);
+    }
+  });
+
+  it("getMoreStoryItems respects a smaller page size", async () => {
+    const [statuses] = await serverFacade.getMoreStoryItems({
+      ...firstFeedPageRequest,
+      pageSize: 3,
+    });
+
+    expect(statuses).toHaveLength(3);
+  });
 });

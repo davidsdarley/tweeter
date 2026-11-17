@@ -1,5 +1,5 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { AuthToken, Status, FakeData } from "tweeter-shared";
+import { AuthToken, Status } from "tweeter-shared";
 import { ServerFacade } from "../network/ServerFacade";
 
 export class StatusService {
@@ -11,8 +11,12 @@ export class StatusService {
         pageSize: number,
         lastItem: Status | null
       ): Promise<[Status[], boolean]> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
+        return this.serverFacade.getMoreStoryItems({
+            token: authToken.token,
+            userAlias: userAlias,
+            pageSize: pageSize,
+            lastItem: lastItem ? lastItem.toDto() : null
+        });
     };
 
     public async loadMoreFeedItems (

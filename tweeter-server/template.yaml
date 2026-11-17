@@ -147,6 +147,19 @@ Resources:
                 responses: *commonAmazonResponses
               responses: *commonSwaggerResponses
 
+          /story/get:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getStoryFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+
           /user/create:  ##### TODO: Set endpoint URL
             post:
               consumes: *commonConsumes
@@ -238,6 +251,20 @@ Resources:
           Properties:
             RestApiId: !Ref tweeterApi
             Path: /feed/get
+            Method: POST
+
+  getStoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getStoryFunction
+      Handler: lambda/status/GetStoryLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /story/get
             Method: POST
 
   userCreateFunction:  ##### TODO: Set function name
