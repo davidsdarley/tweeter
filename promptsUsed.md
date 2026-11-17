@@ -285,3 +285,40 @@ Done when:
 - In tweeter-web: npx tsc --noEmit passes
 
 If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
+
+## TASK 8
+Move login and register logic from tweeter-web to tweeter-server/src/model/service/UserService.ts.
+
+Objective: transfer the functionality of login() and register() from tweeter-web/src/model.service/UserService.ts to tweeter-server/src/model/service/UserService.ts. 
+The functions should set up the same layers as other UserService methods, server method → new Lambda → template.yaml (both the API path block and the function block) → ServerFacade.method → client UserService calls ServerFacade for the replaced methods instead of FakeData. Behavior and output must match what the client gets from FakeData today.
+
+Read first:
+- tweeter-web/src/model.service/UserService.ts
+- tweeter-server/src/lambda/user/GetUserLambda.ts
+- tweeter-server/src/model/service/UserService.ts
+- tweeter-server/template.yaml
+- tweeter-web/src/network/ServerFacade.ts
+- tweeter-shared/src/model/net/request/PagedUserItemRequest.ts
+- tweeter-shared/src/model/dto/UserDto.ts
+- tweeter-shared/src/model/domain/Status.ts
+- tweeter-shared/src/util/FakeData.ts
+- tweeter-shared/src/index.ts
+
+Constraints:
+- Function ID and FunctionName: follow the conventions in the template.yaml file as they currently exist
+- Lambda file: tweeter-server/src/lambda/user/<methodName>.ts, exporting `handler`
+- Put server logic in tweeter-server/src/model/service/UserService.ts.
+- Do not modify tweeter-shared (ask me first if you think a change is needed).
+- Mirror the feed code structure and naming; don't refactor feed
+- Do not change presenters, views, or existing tests (ask me if you think such a change is necessary)
+- Do not add npm dependencies
+- Do not run sam, aws, or deploy commands
+
+Done when:
+- You have written new tweeter-server/test/lambda/<method>.test.ts for login and register, covering a successful request for the method.
+- tweeter-web/test/network/ServerFacade.test.ts is updated to test the updated login and register methods.
+- In tweeter-shared: npm run build with no build issues
+- In tweeter-server: npm run build and npm test pass
+- In tweeter-web: npx tsc --noEmit passes
+
+If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
