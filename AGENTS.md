@@ -9,22 +9,35 @@ Milestone 3: move service logic to Lambdas behind API Gateway; client
 calls them via ServerFacade -> ClientCommunicator. Server returns FakeData.
 
 ## Commands
-- Build: npm run build
-- Test: npm run test
-- Type check: npx tsc --noEmit
+- tweeter-shared:
+    - Build: npm run build
+- tweeter-server:
+    - Build: npm run build
+    - Test: npm run test
+- tweeter-web:
+    - Build: npm run build
+    - Test: npm run test, npx tsc --noEmit
+
 
 ## Conventions
 - All endpoints use POST; auth token goes in the JSON request body
+- Endpoint paths are /<resource>/<action>, e.g. /followees/get
+- Each endpoint needs TWO blocks in tweeter-server/template.yaml: a path under
+  tweeterApi `paths:` and a function resource. Path and function ID must match
+  between them. Handler is relative to dist/ (e.g. lambda/follow/GetFolloweesLambda.handler)
+- Requests/responses live in tweeter-shared and extend TweeterRequest/TweeterResponse
+- Imports: inside tweeter-shared use relative paths only; everywhere else import
+  from "tweeter-shared" only, never a path into it
 - Use named exports, not default exports
 - Do not use the `any` type
 - Requests/responses live in tweeter-shared and extend TweeterRequest/TweeterResponse
 - Lambdas only parse the request, call a service, and build the response; no logic
 
 ## Off-limits
-- Do not edit files in src/generated/ (the build produces them)
+- Do not edit dist/, layer/, or node_modules/ (generated)
 - Do not add npm dependencies without asking
-- Do not commit or run git commands
-- Do not run deploy scripts, AWS CLI commands, or anything touching AWS
+- Do not commit, stash, reset, or change git state
+- Do not run sam, the AWS CLI, deploy scripts, or anything touching AWS
 
 ## AI attribution
 After each task that changes files, append an entry to
