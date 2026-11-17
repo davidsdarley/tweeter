@@ -2,6 +2,7 @@
 import "isomorphic-fetch";
 import { ServerFacade } from "../../src/network/ServerFacade";
 import {
+  AuthToken,
   FakeData,
   IsFollowerRequest,
   PagedStatusItemRequest,
@@ -215,6 +216,40 @@ describe("ServerFacade integration", () => {
       expect(count).toBeGreaterThanOrEqual(1);
       expect(count).toBeLessThanOrEqual(10);
     }
+  });
+
+  it("login returns the user FakeData provides and an AuthToken", async () => {
+    const expectedUser = FakeData.instance.firstUser;
+
+    const [user, authToken] = await serverFacade.login({
+      token: "",
+      userAlias: "@allen",
+      password: "password",
+    });
+
+    expect(user).toBeInstanceOf(User);
+    expect(user.toDto()).toEqual(expectedUser?.toDto());
+    expect(authToken).toBeInstanceOf(AuthToken);
+    expect(authToken.token.length).toBeGreaterThan(0);
+  });
+
+  it("register returns the user FakeData provides and an AuthToken", async () => {
+    const expectedUser = FakeData.instance.firstUser;
+
+    const [user, authToken] = await serverFacade.register({
+      token: "",
+      userAlias: "@newuser",
+      password: "password",
+      firstName: "New",
+      lastName: "User",
+      userImageBytes: "ZmFrZSBpbWFnZSBieXRlcw==", // base64 of "fake image bytes"
+      imageFileExtension: "png",
+    });
+
+    expect(user).toBeInstanceOf(User);
+    expect(user.toDto()).toEqual(expectedUser?.toDto());
+    expect(authToken).toBeInstanceOf(AuthToken);
+    expect(authToken.token.length).toBeGreaterThan(0);
   });
 
   it("logout resolves without error for a valid token", async () => {

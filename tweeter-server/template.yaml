@@ -264,7 +264,7 @@ Resources:
                 responses: *commonAmazonResponses
               responses: *commonSwaggerResponses
 
-          /user/create:  ##### TODO: Set endpoint URL
+          /user/login:
             post:
               consumes: *commonConsumes
               produces: *commonProduces
@@ -272,8 +272,20 @@ Resources:
                 type: aws
                 httpMethod: POST
                 uri:
-                  ##### TODO: Set function name
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${userCreateFunction.Arn}/invocations
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${loginFunction.Arn}/invocations
+                requestTemplates: *commonRequestTemplates
+                responses: *commonAmazonResponses
+              responses: *commonSwaggerResponses
+
+          /user/register:
+            post:
+              consumes: *commonConsumes
+              produces: *commonProduces
+              x-amazon-apigateway-integration:
+                type: aws
+                httpMethod: POST
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${registerFunction.Arn}/invocations
                 requestTemplates: *commonRequestTemplates
                 responses: *commonAmazonResponses
               responses: *commonSwaggerResponses
@@ -483,18 +495,32 @@ Resources:
             Path: /user/logout
             Method: POST
 
-  userCreateFunction:  ##### TODO: Set function name
+  loginFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: userCreateFunction  ##### TODO: Set function name
-      Handler: handlers/users/UserCreateHandler.userCreateHandler  ##### TODO: Set Handler
+      FunctionName: loginFunction
+      Handler: lambda/user/LoginLambda.handler
       Policies: *commonPolicies
       Events:
         PostApi:
           Type: Api
           Properties:
             RestApiId: !Ref tweeterApi
-            Path: /user/create  ##### TODO: Set Path
+            Path: /user/login
+            Method: POST
+
+  registerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: registerFunction
+      Handler: lambda/user/RegisterLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/register
             Method: POST
 
   #

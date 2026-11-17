@@ -1,15 +1,19 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import {
+  AuthResponse,
+  AuthToken,
   FollowResponse,
   GetCountResponse,
   GetUserResponse,
   IsFollowerRequest,
   IsFollowerResponse,
+  LoginRequest,
   PagedStatusItemRequest,
   PagedStatusItemResponse,
   PagedUserItemRequest,
   PagedUserItemResponse,
   PostStatusRequest,
+  RegisterRequest,
   Status,
   TweeterRequest,
   TweeterResponse,
@@ -232,6 +236,44 @@ export class ServerFacade {
     // Handle errors
     if (response.success) {
       return [response.followerCount, response.followeeCount];
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async login(request: LoginRequest): Promise<[User, AuthToken]> {
+    const response = await this.clientCommunicator.doPost<
+      LoginRequest,
+      AuthResponse
+    >(request, "/user/login");
+
+    // Handle errors
+    if (response.success) {
+      if (response.user == null) {
+        throw new Error("Invalid alias or password");
+      } else {
+        return [User.fromDto(response.user), AuthToken.fromDto(response.authToken)];
+      }
+    } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async register(request: RegisterRequest): Promise<[User, AuthToken]> {
+    const response = await this.clientCommunicator.doPost<
+      RegisterRequest,
+      AuthResponse
+    >(request, "/user/register");
+
+    // Handle errors
+    if (response.success) {
+      if (response.user == null) {
+        throw new Error("Invalid registration");
+      } else {
+        return [User.fromDto(response.user), AuthToken.fromDto(response.authToken)];
+      }
     } else {
       console.error(response);
       throw new Error(response.message ?? undefined);
