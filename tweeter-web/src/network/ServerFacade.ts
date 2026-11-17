@@ -9,8 +9,10 @@ import {
   PagedStatusItemResponse,
   PagedUserItemRequest,
   PagedUserItemResponse,
+  PostStatusRequest,
   Status,
   TweeterRequest,
+  TweeterResponse,
   User,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
@@ -123,6 +125,19 @@ export class ServerFacade {
         return [items, response.hasMore];
       }
     } else {
+      console.error(response);
+      throw new Error(response.message ?? undefined);
+    }
+  }
+
+  public async postStatus(request: PostStatusRequest): Promise<void> {
+    const response = await this.clientCommunicator.doPost<
+      PostStatusRequest,
+      TweeterResponse
+    >(request, "/status/post");
+
+    // Handle errors
+    if (!response.success) {
       console.error(response);
       throw new Error(response.message ?? undefined);
     }

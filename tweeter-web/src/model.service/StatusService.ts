@@ -33,9 +33,11 @@ export class StatusService {
         });
     };
     public async postStatus(newStatus: Status, authToken: AuthToken): Promise<void>{
-        return new Promise((f) => setTimeout(f, 2000));
-
-        // TODO: Call the server to post the status
+        return this.serverFacade.postStatus({
+            token: authToken.token,
+            userAlias: newStatus.user.alias,
+            newStatus: newStatus.toDto()
+        });
       };
 
 }

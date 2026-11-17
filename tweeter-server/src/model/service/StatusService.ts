@@ -20,6 +20,13 @@ export class StatusService {
         return this.getFakeData(lastItem, pageSize);
       };
 
+    public async postStatus(
+        token: string,
+        newStatus: StatusDto  ): Promise<void> {
+        // TODO: Call the database to post the status
+        return Promise.resolve();
+      };
+
     private getFakeData(lastItem: StatusDto | null, pageSize: number): Promise<[StatusDto[], boolean]> {
       const [items, hasMore] = FakeData.instance.getPageOfStatuses(lastItem ? Status.fromDto(lastItem) : null, pageSize);
       const dtoItems = items.map((status) => status.toDto());

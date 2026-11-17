@@ -6,6 +6,7 @@ import {
   IsFollowerRequest,
   PagedStatusItemRequest,
   PagedUserItemRequest,
+  Status,
   TweeterRequest,
   User,
 } from "tweeter-shared";
@@ -125,6 +126,19 @@ describe("ServerFacade integration", () => {
     });
 
     expect(statuses).toHaveLength(3);
+  });
+
+  it("postStatus resolves without error for a valid status", async () => {
+    const user = FakeData.instance.firstUser!;
+    const newStatus = new Status("Hello from the ServerFacade test", user, Date.now());
+
+    await expect(
+      serverFacade.postStatus({
+        token: "fake-token",
+        userAlias: user.alias,
+        newStatus: newStatus.toDto(),
+      })
+    ).resolves.toBeUndefined();
   });
 
   const userRequest: TweeterRequest = {
