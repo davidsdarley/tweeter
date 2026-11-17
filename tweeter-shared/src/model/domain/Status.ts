@@ -1,3 +1,5 @@
+// AI-assisted: see AI-ATTRIBUTION.md
+import { StatusDto } from "../dto/StatusDto";
 import { PostSegment, Type } from "./PostSegment";
 import { User } from "./User";
 import { format } from "date-fns";
@@ -13,6 +15,18 @@ export class Status {
     this._user = user;
     this._timestamp = timestamp;
     this._segments = this.getPostSegments(post);
+  }
+
+  public toDto(): StatusDto {
+    return {
+      post: this.post,
+      user: this.user.toDto(),
+      timestamp: this.timestamp,
+    };
+  }
+
+  public static fromDto(dto: StatusDto): Status {
+    return new Status(dto.post, User.fromDto(dto.user), dto.timestamp);
   }
 
   private getPostSegments(post: string): PostSegment[] {

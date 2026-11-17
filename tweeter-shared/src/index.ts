@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 
 //Domain classes
 export { Follow } from "./model/domain/Follow";
@@ -9,13 +10,16 @@ export { AuthToken } from "./model/domain/AuthToken";
 
 // DTOs
 export type { UserDto } from "./model/dto/UserDto";
+export type { StatusDto } from "./model/dto/StatusDto";
 
 // Requests
 export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
+export type { PagedStatusItemRequest } from "./model/net/request/PagedStatusItemRequest";
 export type { TweeterRequest } from "./model/net/request/TweeterRequest";
 
 // Responses
 export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse";
+export type { PagedStatusItemResponse } from "./model/net/response/PagedStatusItemResponse";
 export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 
 // Fake data
