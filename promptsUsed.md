@@ -342,3 +342,37 @@ Done when:
 - every path has a description
 
 If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
+
+## TASK 10
+Add consistent error handling to all Lambdas so API Gateway returns correct status codes.
+
+Objective: Set up so errors thrown by Lambdas are prefixed so template.yaml's response
+mappings return 400/500 instead of 200.
+
+Read first: 
+- tweeter-server/template.yaml
+- all files in tweeter-server/src/lambda/ 
+- all files in tweeter-server/src/model/service/
+- tweeter-web/src/network/ClientCommunicator.ts
+
+Constraints:
+- Create tweeter-server/src/lambda/handleErrors.ts exporting handleErrors(operation):
+  rethrow errors whose message starts with "[" unchanged; wrap all others as
+  "[internal-server-error] <message>"
+- Wrap every Lambda handler body in handleErrors; make no other Lambda changes
+- In server services, throw "[bad-request] <reason>" when a required request field
+  is missing or invalid (empty alias, missing token, pageSize <= 0). Ask me before
+  adding any other validation.
+- In ClientCommunicator, change the error branch to read 'error.error ?? error.errorMessage'
+- Do not use the [unauthorized] prefix yet
+- Do not change template.yaml, presenters, views, or tweeter-shared
+- Do not run sam, aws, or deploy commands
+- Do not add npm dependencies
+
+
+Done when:
+- Each Lambda test file has at least one test that a bad request rejects with "[bad-request]"
+- A test for handleErrors covers: prefixed error passes through, unprefixed error
+  becomes [internal-server-error]
+- In tweeter-server: npm run build and npm test pass
+- In tweeter-web: npx tsc --noEmit passes

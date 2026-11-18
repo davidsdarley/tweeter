@@ -32,6 +32,7 @@ calls them via ServerFacade -> ClientCommunicator. Server returns FakeData.
 - Do not use the `any` type
 - Requests/responses live in tweeter-shared and extend TweeterRequest/TweeterResponse
 - Lambdas only parse the request, call a service, and build the response; no logic
+- Lambdas wrap handlers in handleErrors; thrown errors use [bad-request]/[unauthorized]/[internal-server-error] prefixes.
 
 ## Off-limits
 - Do not edit dist/, layer/, or node_modules/ (generated)
