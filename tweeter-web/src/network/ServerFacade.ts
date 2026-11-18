@@ -155,7 +155,6 @@ export class ServerFacade {
 
     // Handle errors
     if (response.success) {
-      // A null user means no user has that alias (same as FakeData.findUserByAlias)
       return response.user ? User.fromDto(response.user) : null;
     } else {
       console.error(response);
