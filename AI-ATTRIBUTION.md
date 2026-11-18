@@ -62,3 +62,7 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Add consistent error handling to all Lambdas (handleErrors wrapper that prefixes unprefixed errors with [internal-server-error], [bad-request] validation in server services for missing token / empty alias / pageSize <= 0, ClientCommunicator reading error.error ?? error.errorMessage) so API Gateway returns 400/500 instead of 200, with tests.
 - Review: Made an unauthorized change to the ClientCommunicator, change reversed. handleErrors makes minimal changes and appropriately wraps parsing functions. Tests pass. Behavior normal. Changes accepted. 
+## 2026-11-18: tweeter-web/test/network/ServerFacade.test.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Add the missing imports for describe, it, and expect to tweeter-web/test/network/ServerFacade.test.ts.
+- Review: This one was more of a test to see if the AI could find the correct things to import. It did. Changes accepted.

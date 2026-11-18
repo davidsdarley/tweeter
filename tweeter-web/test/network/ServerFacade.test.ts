@@ -1,5 +1,6 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import "isomorphic-fetch";
+import { describe, expect, it } from "@jest/globals";
 import { ServerFacade } from "../../src/network/ServerFacade";
 import {
   AuthToken,
