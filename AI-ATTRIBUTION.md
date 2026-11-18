@@ -54,3 +54,7 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Move login and register from the client UserService to the server UserService end to end (shared LoginRequest, RegisterRequest, AuthResponse, AuthTokenDto, Lambdas, template.yaml /user/login and /user/register blocks replacing the /user/create placeholder, ServerFacade methods, client UserService calling the server), mirroring the feed code, with Lambda and ServerFacade tests.
 - Review: Looks pretty good. It is 10:30PM and I've been working on this same blasted project since 11AM, so I know this isn't nearly good enough of a review but it's following all the same pattern as before, it works, and I'm 90% sure I know what it's doing. Changes accepted.
+## 2026-11-17: tweeter-server/template.yaml, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Add a `description:` under `post:` for every endpoint in the tweeterApi `paths:` section of template.yaml, saying what the endpoint does, what the request contains, and what the response returns.
+- Review: ONly additions, no removals to anything. Each addition is fairly short. After reading through the descriptions, that is indeed what they do and the correct info about their requests and responses. Changes Accepted. 

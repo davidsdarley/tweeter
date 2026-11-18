@@ -108,6 +108,7 @@ Resources:
 
           /followees/get: 
             post:
+              description: "Returns one page of the users that a user follows. The request contains token, userAlias, pageSize, and lastItem (the last UserDto from the previous page, or null for the first page); the response returns items (UserDto[]) and hasMore."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -123,6 +124,7 @@ Resources:
 
           /followers/get:
             post:
+              description: "Returns one page of the users who follow a user. The request contains token, userAlias, pageSize, and lastItem (the last UserDto from the previous page, or null for the first page); the response returns items (UserDto[]) and hasMore."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -136,6 +138,7 @@ Resources:
 
           /feed/get:
             post:
+              description: "Returns one page of statuses in a user's feed (posts from the users they follow). The request contains token, userAlias, pageSize, and lastItem (the last StatusDto from the previous page, or null for the first page); the response returns items (StatusDto[]) and hasMore."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -149,6 +152,7 @@ Resources:
 
           /story/get:
             post:
+              description: "Returns one page of statuses that a user has posted. The request contains token, userAlias, pageSize, and lastItem (the last StatusDto from the previous page, or null for the first page); the response returns items (StatusDto[]) and hasMore."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -162,6 +166,7 @@ Resources:
 
           /status/post:
             post:
+              description: "Posts a new status for the logged-in user. The request contains token, userAlias, and newStatus (a StatusDto); the response returns only success and message."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -175,6 +180,7 @@ Resources:
 
           /user/get:
             post:
+              description: "Looks up a user by alias. The request contains token and userAlias; the response returns user (a UserDto, or null if no user has that alias)."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -188,6 +194,7 @@ Resources:
 
           /followee/count:
             post:
+              description: "Returns how many users a user follows. The request contains token and userAlias; the response returns count."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -201,6 +208,7 @@ Resources:
 
           /follower/count:
             post:
+              description: "Returns how many followers a user has. The request contains token and userAlias; the response returns count."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -214,6 +222,7 @@ Resources:
 
           /follower/status:
             post:
+              description: "Checks whether a user follows a selected user. The request contains token, userAlias, and selectedUserAlias; the response returns isFollower (boolean)."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -227,6 +236,7 @@ Resources:
 
           /user/follow:
             post:
+              description: "Makes the logged-in user follow another user. The request contains token and userAlias (the user to follow); the response returns that user's updated followerCount and followeeCount."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -240,6 +250,7 @@ Resources:
 
           /user/unfollow:
             post:
+              description: "Makes the logged-in user stop following another user. The request contains token and userAlias (the user to unfollow); the response returns that user's updated followerCount and followeeCount."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -253,6 +264,7 @@ Resources:
 
           /user/logout:
             post:
+              description: "Logs the user out by invalidating their auth token. The request contains token and userAlias; the response returns only success and message."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -266,6 +278,7 @@ Resources:
 
           /user/login:
             post:
+              description: "Logs a user in with their alias and password. The request contains userAlias and password (token is not used); the response returns user (a UserDto, or null) and authToken (an AuthTokenDto)."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:
@@ -279,6 +292,7 @@ Resources:
 
           /user/register:
             post:
+              description: "Creates a new user account and logs it in. The request contains firstName, lastName, userAlias, password, userImageBytes (base64-encoded), and imageFileExtension; the response returns user (a UserDto, or null) and authToken (an AuthTokenDto)."
               consumes: *commonConsumes
               produces: *commonProduces
               x-amazon-apigateway-integration:

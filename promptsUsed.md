@@ -322,3 +322,23 @@ Done when:
 - In tweeter-web: npx tsc --noEmit passes
 
 If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
+
+## Task 9
+Add API documentation descriptions to tweeter-server/template.yaml.
+
+Objective: For every endpoint under tweeterApi `paths:`, add a `description:`
+under its `post:` explaining what the endpoint does, what the request contains,
+and what the response returns.
+
+Read first: tweeter-server/template.yaml, the Lambda and service for each endpoint,
+and the request/response types in tweeter-shared.
+
+Constraints:
+- Only add description lines; change nothing else in template.yaml
+- One or two sentences each, plain and specific
+- Do not run sam, aws, or deploy commands
+
+Done when: 
+- every path has a description
+
+If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
