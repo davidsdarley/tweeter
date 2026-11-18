@@ -1,5 +1,6 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { FakeData, Status, StatusDto } from "tweeter-shared";
+import { requireAlias, requirePositivePageSize, requireToken } from "./RequestValidation";
 
 export class StatusService {
     public async loadMoreStoryItems(
@@ -7,6 +8,9 @@ export class StatusService {
         userAlias: string,
         pageSize: number,
         lastItem: StatusDto | null  ): Promise<[StatusDto[], boolean]> {
+        requireToken(token);
+        requireAlias(userAlias);
+        requirePositivePageSize(pageSize);
         // TODO: Replace with the result of calling the database
         return this.getFakeData(lastItem, pageSize);
       };
@@ -16,6 +20,9 @@ export class StatusService {
         userAlias: string,
         pageSize: number,
         lastItem: StatusDto | null  ): Promise<[StatusDto[], boolean]> {
+        requireToken(token);
+        requireAlias(userAlias);
+        requirePositivePageSize(pageSize);
         // TODO: Replace with the result of calling the database
         return this.getFakeData(lastItem, pageSize);
       };
@@ -23,6 +30,7 @@ export class StatusService {
     public async postStatus(
         token: string,
         newStatus: StatusDto  ): Promise<void> {
+        requireToken(token);
         // TODO: Call the database to post the status
         return Promise.resolve();
       };

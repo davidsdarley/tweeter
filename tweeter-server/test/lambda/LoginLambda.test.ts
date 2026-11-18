@@ -24,4 +24,10 @@ describe("LoginLambda", () => {
     expect(response.user).toEqual(FakeData.instance.firstUser?.toDto());
     expect(response.authToken).toEqual(FakeData.instance.authToken.toDto());
   });
+
+  it("rejects a request with an empty alias as a bad request", async () => {
+    await expect(handler({ ...request, userAlias: "" })).rejects.toThrow(
+      "[bad-request] Missing user alias"
+    );
+  });
 });

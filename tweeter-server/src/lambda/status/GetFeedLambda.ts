@@ -2,8 +2,9 @@
 import { PagedStatusItemRequest } from "tweeter-shared";
 import { PagedStatusItemResponse } from "tweeter-shared";
 import { StatusService } from "../../model/service/StatusService";
+import { handleErrors } from "../handleErrors";
 
-export const handler = async (request: PagedStatusItemRequest): Promise<PagedStatusItemResponse> => {
+export const handler = async (request: PagedStatusItemRequest): Promise<PagedStatusItemResponse> => handleErrors(async () => {
 
     const statusService = new StatusService();
     const [items, hasMore] = await statusService.loadMoreFeedItems(request.token, request.userAlias, request.pageSize, request.lastItem);
@@ -15,4 +16,4 @@ export const handler = async (request: PagedStatusItemRequest): Promise<PagedSta
         hasMore: hasMore
     };
 
-}
+});

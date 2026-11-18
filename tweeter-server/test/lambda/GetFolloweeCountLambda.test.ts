@@ -24,4 +24,10 @@ describe("GetFolloweeCountLambda", () => {
     expect(response.count).toBeGreaterThanOrEqual(1);
     expect(response.count).toBeLessThanOrEqual(10);
   });
+
+  it("rejects a request with a missing token as a bad request", async () => {
+    await expect(handler({ ...request, token: "" })).rejects.toThrow(
+      "[bad-request] Missing auth token"
+    );
+  });
 });

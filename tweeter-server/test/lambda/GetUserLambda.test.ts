@@ -34,4 +34,10 @@ describe("GetUserLambda", () => {
     expect(response.success).toBe(true);
     expect(response.user).toBeNull();
   });
+
+  it("rejects a request with a missing token as a bad request", async () => {
+    await expect(handler({ ...request, token: "" })).rejects.toThrow(
+      "[bad-request] Missing auth token"
+    );
+  });
 });

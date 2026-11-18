@@ -1,8 +1,10 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import { PagedUserItemRequest } from "tweeter-shared";
 import { PagedUserItemResponse } from "tweeter-shared";
 import { FollowService } from "../../model/service/FollowService";
+import { handleErrors } from "../handleErrors";
 
-export const handler = async (request: PagedUserItemRequest): Promise<PagedUserItemResponse> => {
+export const handler = async (request: PagedUserItemRequest): Promise<PagedUserItemResponse> => handleErrors(async () => {
     
     const followService = new FollowService();
     const [items, hasMore] = await followService.loadMoreFollowees(request.token, request.userAlias, request.pageSize, request.lastItem);
@@ -14,4 +16,4 @@ export const handler = async (request: PagedUserItemRequest): Promise<PagedUserI
         hasMore: hasMore
     };
 
-}
+});

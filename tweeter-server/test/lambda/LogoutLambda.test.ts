@@ -16,4 +16,10 @@ describe("LogoutLambda", () => {
     expect(response.success).toBe(true);
     expect(response.message).toBeNull();
   });
+
+  it("rejects a request with a missing token as a bad request", async () => {
+    await expect(handler({ ...request, token: "" })).rejects.toThrow(
+      "[bad-request] Missing auth token"
+    );
+  });
 });

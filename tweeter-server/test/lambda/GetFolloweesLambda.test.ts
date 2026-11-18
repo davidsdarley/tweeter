@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 // AI-assisted: I got help from claude writing the tests. 
 
 import { describe, expect, it } from "@jest/globals";
@@ -35,4 +36,9 @@ describe("GetFolloweesLambda", () => {
 //     expect(response.hasMore).toBe(expectedHasMore);
 //   });
 
+  it("rejects a pageSize of 0 as a bad request", async () => {
+    await expect(handler({ ...firstPageRequest, pageSize: 0 })).rejects.toThrow(
+      "[bad-request] pageSize must be greater than 0"
+    );
+  });
 });

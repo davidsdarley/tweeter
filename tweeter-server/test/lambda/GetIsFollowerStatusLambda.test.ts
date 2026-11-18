@@ -23,4 +23,10 @@ describe("GetIsFollowerStatusLambda", () => {
 
     expect(typeof response.isFollower).toBe("boolean");
   });
+
+  it("rejects a request with a missing token as a bad request", async () => {
+    await expect(handler({ ...request, token: "" })).rejects.toThrow(
+      "[bad-request] Missing auth token"
+    );
+  });
 });

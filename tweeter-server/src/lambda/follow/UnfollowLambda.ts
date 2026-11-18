@@ -2,8 +2,9 @@
 import { TweeterRequest } from "tweeter-shared";
 import { FollowResponse } from "tweeter-shared";
 import { FollowService } from "../../model/service/FollowService";
+import { handleErrors } from "../handleErrors";
 
-export const handler = async (request: TweeterRequest): Promise<FollowResponse> => {
+export const handler = async (request: TweeterRequest): Promise<FollowResponse> => handleErrors(async () => {
 
     const followService = new FollowService();
     const [followerCount, followeeCount] = await followService.unfollow(request.token, request.userAlias);
@@ -15,4 +16,4 @@ export const handler = async (request: TweeterRequest): Promise<FollowResponse> 
         followeeCount: followeeCount
     };
 
-}
+});

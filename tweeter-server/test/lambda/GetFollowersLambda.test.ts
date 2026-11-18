@@ -59,4 +59,10 @@ describe("GetFollowersLambda", () => {
     expect(response.success).toBe(true);
     expect(response.items).toHaveLength(3);
   });
+
+  it("rejects a pageSize of 0 as a bad request", async () => {
+    await expect(handler({ ...firstPageRequest, pageSize: 0 })).rejects.toThrow(
+      "[bad-request] pageSize must be greater than 0"
+    );
+  });
 });
