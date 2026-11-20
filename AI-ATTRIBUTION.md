@@ -66,3 +66,7 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Add the missing imports for describe, it, and expect to tweeter-web/test/network/ServerFacade.test.ts.
 - Review: This one was more of a test to see if the AI could find the correct things to import. It did. Changes accepted.
+## 2026-11-19: PostStatus sequence diagram (new file, submitted as PDF)
+- Tool: Claude (claude.ai chat)
+- Task: Drafted a Mermaid UML sequence diagram of a successful status post, from PostStatus.submitPost() through API Gateway and the PostStatusLambda to the final displayInfoMessage(), based on my PostStatus component, PostStatusPresenter, and PostStatusLambda code.
+- Review: A few misunderstanding about how doToastOperation works and excessively flowery language and descriptions. Corrected doTOastOperation and rewrote bits that I didn't like, then diagram accepted.
