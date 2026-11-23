@@ -465,3 +465,36 @@ Constraints:
 Done when: tweeter-server builds (npm run build).
 
 If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
+
+## TASK 3
+Implement DynamoFollowDAO in tweeter-server/src/dao/dynamo/ and return it
+from DynamoDAOFactory.
+
+Read First:
+tweeter-server/src/dao/ (interfaces), tweeter-server/src/dao/dynamo/
+(DynamoUserDAO and DynamoConfig, for style and client injection),
+AGENTS.md (Data layer section for the follows table and follows_index GSI)
+
+Requirements:
+- Inject the shared DynamoDBDocumentClient through the constructor,
+  same as DynamoUserDAO. Table/index names come from DynamoConfig.
+- getFolloweeAliases: Query follows on follower_alias. getFollowerAliases:
+  Query follows_index on followee_alias.
+- Paging: lastAlias null means the first page; otherwise build
+  ExclusiveStartKey from (alias, lastAlias). Return [aliases, hasMore].
+- Put the paging logic (Query + Limit + ExclusiveStartKey + hasMore) in a
+  reusable helper in dao/dynamo/ so StatusDAO can use it later. Do not
+  write it twice for followees and followers.
+- getAllFollowerAliases: loop through every page of follows_index and
+  return all follower aliases.
+- This DAO only touches the follows table. Do not update user counts here;
+  the service will do that through UserDAO.
+
+Constraints:
+- Do not change the DAO interfaces. If one seems wrong, ask me first.
+- Do not change services yet.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build).
+
+If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.

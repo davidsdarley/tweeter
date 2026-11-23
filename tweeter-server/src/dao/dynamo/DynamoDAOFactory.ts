@@ -9,6 +9,7 @@ import { StatusDAO } from "../StatusDAO";
 import { UserDAO } from "../UserDAO";
 import { DynamoAuthTokenDAO } from "./DynamoAuthTokenDAO";
 import { AWS_REGION } from "./DynamoConfig";
+import { DynamoFollowDAO } from "./DynamoFollowDAO";
 import { DynamoUserDAO } from "./DynamoUserDAO";
 
 // One client per Lambda container, shared by every DAO and reused across warm invocations.
@@ -19,6 +20,7 @@ const documentClient = DynamoDBDocumentClient.from(
 
 export class DynamoDAOFactory implements DAOFactory {
     private userDAO: UserDAO | null = null;
+    private followDAO: FollowDAO | null = null;
     private authTokenDAO: AuthTokenDAO | null = null;
 
     public getUserDAO(): UserDAO {
@@ -29,7 +31,10 @@ export class DynamoDAOFactory implements DAOFactory {
     }
 
     public getFollowDAO(): FollowDAO {
-        throw new Error("Not implemented");
+        if (this.followDAO === null) {
+            this.followDAO = new DynamoFollowDAO(documentClient);
+        }
+        return this.followDAO;
     }
 
     public getStatusDAO(): StatusDAO {

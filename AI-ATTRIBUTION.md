@@ -89,3 +89,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Implement DynamoUserDAO and DynamoAuthTokenDAO using a single shared DynamoDBDocumentClient and a central table/region config file, and return them from DynamoDAOFactory; no interface or service changes.
 - Review: New files do what I asked for them to do and no more. The only existing file altered is the DAO factory. Config file created and correctly identifies the tabels I made in Dynamo earlier. DAO factory only changed in the places for the authtoken and user, as they should. Changes accepted.
+
+## 2026-11-23: tweeter-server/src/dao/dynamo/DynamoPaging.ts (new file), tweeter-server/src/dao/dynamo/DynamoFollowDAO.ts (new file), tweeter-server/src/dao/dynamo/DynamoDAOFactory.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Implement DynamoFollowDAO (follows table and follows_index GSI) with paging in a reusable query helper that StatusDAO can use later, and return it from DynamoDAOFactory; no interface or service changes.
+- Review: Paged item logic put into newly made DynamoPaging.ts, and looks good. DynamoFollowDAO accesses both the main follow table and the reversed index part. Minimal changes to the factory, returns the dao now. All looks good, build passes. Changes accepted.
