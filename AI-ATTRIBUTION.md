@@ -99,3 +99,12 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Implement DynamoStatusDAO (story and feed tables, paging through the shared helper, feed fan-out with BatchWrite in chunks of 25) and return it from DynamoDAOFactory; move DynamoUserDAO's unprocessed-retry/backoff loop and sleep() into a shared helper used by both DAOs without changing UserDAO behavior.
 - Review: Retrying logic moved out of a single file, and looking good still. Factory looking good, new path built. Both status and feed things are in the same DAO and it's looking a bit big, but I don't think the switch is worth the works since I can still find everything in it. Changes accepted.
+## 2026-11-23: N/A
+- Tool: Claude chat
+- Task: Got help figuring out how to word the image uploading task so it would include the code the project spec told me I should use, and how to direct it to use S3.
+- Revew: TODO
+
+## 2026-11-23: tweeter-server/src/dao/s3/S3ImageDAO.ts (new file), tweeter-server/src/dao/dynamo/DynamoConfig.ts, tweeter-server/src/dao/dynamo/DynamoDAOFactory.ts, tweeter-server/tsconfig.json, AGENTS.md, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Implement S3ImageDAO from the spec's putImage code with an injected shared S3Client, bucket/region in config, ContentType from the file extension, public-read ACL, and [internal-server-error] on failure, and return it from DynamoDAOFactory; no interface or service changes.
+- Review: AI Caught a mistake I made in my instructions in AGENTS.md and something missing from my config file so that's cool and fixed. Last factory thing added appropriately. Code from the suggested way to do images translated over without change. All looking good. Build still works, nothing broken. Changes accepted.

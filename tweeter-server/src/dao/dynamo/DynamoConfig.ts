@@ -11,3 +11,6 @@ export const TABLES = {
     feed: "feed",
     authToken: "authtoken",
 } as const;
+
+// TODO: replace with the real S3 bucket that holds profile images.
+export const IMAGE_BUCKET = "REPLACE-WITH-BUCKET-NAME";

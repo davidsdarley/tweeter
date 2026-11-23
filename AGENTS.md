@@ -38,7 +38,7 @@ and auth-token validation on every authenticated request.
 ## Data layer
 - DAO interfaces are database-agnostic: no AWS types or imports in them
 - Services get DAOs from a DAOFactory; services never call `new` on a DAO
-- All DynamoDB/S3 code lives in the dynamo DAO package only
+- All DynamoDB/S3 code lives in the dynamo and s3 DAO packages only
 - Every authenticated service method validates the token through AuthorizationService first
 - Never store or return plaintext passwords; hash with bcryptjs
 - Reuse shared helpers (e.g. paging) instead of duplicating query code

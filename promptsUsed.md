@@ -527,6 +527,64 @@ Requirements:
 - Take the retry/backoff loop and sleep() from DynamoUserDAO and put it into a
   shared helper in dao/dynamo/, and use it in both DynamoUserDAO and
   DynamoStatusDAO. DynamoUserDAO's behavior must not change.
+  
+
+Constraints:
+- Do not change the DAO interfaces. If one seems wrong, ask me first.
+- Do not change services yet.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build).
+
+If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
+
+## TASK 5
+Implement S3ImageDAO in tweeter-server/src/dao/s3/ and return it from
+DynamoDAOFactory.
+
+Read First:
+tweeter-server/src/dao/ (interfaces), tweeter-server/src/dao/dynamo/
+(DynamoConfig and DynamoDAOFactory, for config and injection style),
+tweeter-server/src (the register service and request, to see what image
+data comes in)
+
+Requirements:
+- Base it on this code from the spec:
+    async putImage(
+    fileName: string,
+    imageStringBase64Encoded: string
+  ): Promise<string> {
+    let decodedImageBuffer: Buffer = Buffer.from(
+      imageStringBase64Encoded,
+      "base64"
+    );
+    const s3Params = {
+      Bucket: BUCKET,
+      Key: "image/" + fileName,
+      Body: decodedImageBuffer,
+      ContentType: "image/png",
+      ACL: ObjectCannedACL.public_read,
+    };
+    const c = new PutObjectCommand(s3Params);
+    const client = new S3Client({ region: REGION });
+    try {
+      await client.send(c);
+      return (
+      `https://${BUCKET}.s3.${REGION}.amazonaws.com/image/${fileName}`
+      );
+    } catch (error) {
+      throw Error("s3 put image failed with: " + error);
+    }
+  }
+- Inject one shared S3Client through the constructor; do not create a
+  client per call.
+- Put the bucket name and region in config next to the table names, not
+  hard-coded in the DAO.
+- Set ContentType from the file extension (e.g. png → image/png,
+  jpg/jpeg → image/jpeg) instead of always image/png.
+- Keep ACL public-read and return the public URL
+  https://<bucket>.s3.<region>.amazonaws.com/image/<fileName>.
+- On failure, throw with the [internal-server-error] prefix.
 
 Constraints:
 - Do not change the DAO interfaces. If one seems wrong, ask me first.
