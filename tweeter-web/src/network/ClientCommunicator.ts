@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import { TweeterRequest, TweeterResponse } from "tweeter-shared";
 
 export class ClientCommunicator {
@@ -39,8 +40,14 @@ export class ClientCommunicator {
         const response: RES = await resp.json();
         return response;
       } else {
-        const error = await resp.json();
-        throw new Error(error.errorMessage);
+        // Our template.yaml mappings return { error }, but errors API Gateway
+        // generates itself (e.g. a Lambda that fails to start) return { message }.
+        const error: { error?: string; message?: string } = await resp
+          .json()
+          .catch(() => ({}));
+        throw new Error(
+          error.error || error.message || `HTTP ${resp.status} ${resp.statusText}`,
+        );
       }
     } catch (error) {
       console.error(error);

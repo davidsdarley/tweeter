@@ -70,3 +70,7 @@
 - Tool: Claude (claude.ai chat)
 - Task: Drafted a Mermaid UML sequence diagram of a successful status post, from PostStatus.submitPost() through API Gateway and the PostStatusLambda to the final displayInfoMessage(), based on my PostStatus component, PostStatusPresenter, and PostStatusLambda code.
 - Review: A few misunderstanding about how doToastOperation works and excessively flowery language and descriptions. Corrected doTOastOperation and rewrote bits that I didn't like, then diagram accepted.
+## 2026-11-23: tweeter-server/build-layer.sh, tweeter-web/src/network/ClientCommunicator.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Fix build-layer.sh so the bcryptjs install no longer deletes tweeter-shared from the Lambda layer, and fix ClientCommunicator so failed requests show the server's error message instead of a blank one.
+- Review: Was trying to fix an issue where register doesn't work. After testing this, that issue was not actually fixed. This did fix real issues I didn't know about though, so changes accepted. 
