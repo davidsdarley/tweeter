@@ -398,3 +398,39 @@ Done when:
 - You have located which file is causing the incorrect behavior.
 
 If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
+
+# Milestone 4
+## TASK 1
+Create the data access layer interfaces and factory for tweeter-server. No implementations yet.
+
+Create in tweeter-server/src/dao/:
+- UserDAO: getUser(alias), getUsers(aliases) (batch), putUser(user, passwordHash),
+  getPasswordHash(alias), incrementFollowerCount/decrementFollowerCount(alias),
+  incrementFolloweeCount/decrementFolloweeCount(alias), getFollowerCount(alias),
+  getFolloweeCount(alias)
+- FollowDAO: putFollow(follower, followee), deleteFollow(follower, followee),
+  isFollower(follower, followee), getFolloweeAliases(alias, pageSize, lastAlias),
+  getFollowerAliases(alias, pageSize, lastAlias), getAllFollowerAliases(alias)
+- StatusDAO: putStory(status), getStoryPage(alias, pageSize, lastStatus),
+  putFeedItems(receiverAliases, status), getFeedPage(alias, pageSize, lastStatus)
+- AuthTokenDAO: putToken(token, alias, expiresAt), getToken(token),
+  updateExpiration(token, expiresAt), deleteToken(token)
+- ImageDAO: putImage(fileName, imageBase64): returns URL
+- DAOFactory interface with a getter for each DAO
+
+Create tweeter-server/src/dao/dynamo/DynamoDAOFactory.ts implementing
+DAOFactory, with each getter throwing "not implemented" for now.
+
+Read First:
+tweeter-server/src (model classes and DTOs), tweeter-server/src (services and lambdas)
+
+Constraints: 
+- interfaces must not import AWS types. Use shared model types/DTOs
+where they fit. 
+- Paged methods return [items, hasMore]. 
+- All methods async.
+- Do not change services yet.
+
+Done when: tweeter-server builds (npm run build). 
+
+If you notice any methods or arguments missing from the list of what I want you to build, ask me before changing the functions I've asked for or what they expect.

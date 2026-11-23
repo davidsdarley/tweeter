@@ -79,3 +79,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Fix Register sending empty fields ("[bad-request] Missing user alias") by passing the current form values into RegisterPresenter.doRegister as parameters, the way Login passes them to doLogin, instead of reading them from the view captured on the first render.
 - Review: The issue is fixed, now works the same way Login does. Simple change, changes accepted.
+
+## 2026-11-23: tweeter-server/src/dao/UserDAO.ts (new file), tweeter-server/src/dao/FollowDAO.ts (new file), tweeter-server/src/dao/StatusDAO.ts (new file), tweeter-server/src/dao/AuthTokenDAO.ts (new file), tweeter-server/src/dao/ImageDAO.ts (new file), tweeter-server/src/dao/DAOFactory.ts (new file), tweeter-server/src/dao/dynamo/DynamoDAOFactory.ts (new file), AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Create the database-agnostic DAO interfaces (User, Follow, Status, AuthToken, Image) and the DAOFactory interface for tweeter-server, plus a DynamoDAOFactory whose getters throw "not implemented"; no implementations and no service changes.
+- Review: DAOs have the info I need them to have. All stored in a good spot. nothing edited, only new things created. DAOFactory looking good. Changes accepted.
