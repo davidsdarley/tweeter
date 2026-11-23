@@ -84,3 +84,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Create the database-agnostic DAO interfaces (User, Follow, Status, AuthToken, Image) and the DAOFactory interface for tweeter-server, plus a DynamoDAOFactory whose getters throw "not implemented"; no implementations and no service changes.
 - Review: DAOs have the info I need them to have. All stored in a good spot. nothing edited, only new things created. DAOFactory looking good. Changes accepted.
+
+## 2026-11-23: tweeter-server/src/dao/dynamo/DynamoConfig.ts (new file), tweeter-server/src/dao/dynamo/DynamoUserDAO.ts (new file), tweeter-server/src/dao/dynamo/DynamoAuthTokenDAO.ts (new file), tweeter-server/src/dao/dynamo/DynamoDAOFactory.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Implement DynamoUserDAO and DynamoAuthTokenDAO using a single shared DynamoDBDocumentClient and a central table/region config file, and return them from DynamoDAOFactory; no interface or service changes.
+- Review: New files do what I asked for them to do and no more. The only existing file altered is the DAO factory. Config file created and correctly identifies the tabels I made in Dynamo earlier. DAO factory only changed in the places for the authtoken and user, as they should. Changes accepted.

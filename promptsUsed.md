@@ -434,3 +434,34 @@ where they fit.
 Done when: tweeter-server builds (npm run build). 
 
 If you notice any methods or arguments missing from the list of what I want you to build, ask me before changing the functions I've asked for or what they expect.
+
+## TASK 2
+Implement DynamoUserDAO and DynamoAuthTokenDAO in tweeter-server/src/dao/dynamo/,
+and return them from DynamoDAOFactory.
+
+Read First:
+tweeter-server/src/dao/ (interfaces), tweeter-shared/src (model classes and DTOs),
+AGENTS.md (Data layer section for table schemas)
+
+Requirements:
+- Use DynamoDBDocumentClient from @aws-sdk/lib-dynamodb.
+- Create one shared DynamoDBDocumentClient and pass it into each DAO through its constructor. Do not create a client per call.
+- Put table names and region in one config/constants file, not scattered through the DAOs.
+- DynamoUserDAO:
+  - putUser fails if the alias already exists (ConditionExpression
+    attribute_not_exists(alias))
+  - count increment/decrement use UpdateItem ADD
+  - new users start with followerCount and followeeCount at 0
+  - getUsers uses BatchGetItem, handles the 100-key limit, retries
+    UnprocessedKeys, and returns users in the same order as the input aliases
+  - getUser returns null if not found; never return passwordHash from getUser
+- DynamoAuthTokenDAO: getToken returns null if not found.
+
+Constraints:
+- Do not change the DAO interfaces. If one seems wrong, ask me first.
+- Do not change services yet.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build).
+
+If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
