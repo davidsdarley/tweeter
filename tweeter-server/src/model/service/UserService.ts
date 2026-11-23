@@ -1,8 +1,15 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { AuthTokenDto, FakeData, UserDto } from "tweeter-shared";
+import { DAOFactory } from "../../dao/DAOFactory";
 import { requireAlias, requireToken } from "./RequestValidation";
 
 export class UserService {
+    private readonly daoFactory: DAOFactory;
+
+    public constructor(daoFactory: DAOFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     public async login(alias: string, password: string): Promise<[UserDto | null, AuthTokenDto]> {
         requireAlias(alias);
         // TODO: Replace with the result of calling the database

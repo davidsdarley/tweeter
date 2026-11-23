@@ -2,11 +2,12 @@
 import { TweeterRequest } from "tweeter-shared";
 import { GetUserResponse } from "tweeter-shared";
 import { UserService } from "../../model/service/UserService";
+import { daoFactory } from "../DAOFactoryInstance";
 import { handleErrors } from "../handleErrors";
 
 export const handler = async (request: TweeterRequest): Promise<GetUserResponse> => handleErrors(async () => {
 
-    const userService = new UserService();
+    const userService = new UserService(daoFactory);
     const user = await userService.getUser(request.token, request.userAlias);
 
     return {

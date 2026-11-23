@@ -527,7 +527,6 @@ Requirements:
 - Take the retry/backoff loop and sleep() from DynamoUserDAO and put it into a
   shared helper in dao/dynamo/, and use it in both DynamoUserDAO and
   DynamoStatusDAO. DynamoUserDAO's behavior must not change.
-  
 
 Constraints:
 - Do not change the DAO interfaces. If one seems wrong, ask me first.
@@ -589,6 +588,45 @@ Requirements:
 Constraints:
 - Do not change the DAO interfaces. If one seems wrong, ask me first.
 - Do not change services yet.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build).
+
+If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
+
+## TASK 6
+Create an AuthorizationService in tweeter-server/src/model/service/ and set up
+how services receive the DAOFactory.
+
+Read First:
+tweeter-server/src (services, lambdas, handleErrors), tweeter-server/src/dao/
+(interfaces and DynamoDAOFactory), tweeter-shared/src (AuthToken),
+tweeter-server/template.yaml (error response mappings), AGENTS.md
+
+Requirements:
+- AuthorizationService takes a DAOFactory in its constructor and gets
+  AuthTokenDAO from it. Methods:
+  - createSession(alias): generate an AuthToken (use AuthToken.Generate()
+    from tweeter-shared), store it with expiresAt, return it
+  - authorize(token): return the token's alias if it exists and hasn't
+    expired, and push expiresAt forward; otherwise throw an error with the
+    [unauthorized] prefix
+  - endSession(token): delete the token
+- Token lifetime is one constant: TOKEN_LIFETIME_SECONDS = 3600.
+  expiresAt is in epoch seconds (not ms).
+- Give every existing service a constructor that takes a DAOFactory.
+  Services must never call `new` on a DAO.
+- Create one DynamoDAOFactory instance in a single module that the lambdas
+  import and pass into services. This is the only place DynamoDAOFactory
+  is constructed.
+- Check template.yaml: confirm [unauthorized] maps to 401 with CORS
+  headers on the error response. If it's missing, add it, following the
+  existing mappings' pattern.
+
+Constraints:
+- Do not replace FakeData in the services yet, and do not call authorize()
+  from them yet.
+- Do not change the DAO interfaces. If one seems wrong, ask me first.
 - Do not run anything that touches AWS.
 
 Done when: tweeter-server builds (npm run build).

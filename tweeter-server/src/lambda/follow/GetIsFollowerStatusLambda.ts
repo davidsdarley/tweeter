@@ -2,11 +2,12 @@
 import { IsFollowerRequest } from "tweeter-shared";
 import { IsFollowerResponse } from "tweeter-shared";
 import { FollowService } from "../../model/service/FollowService";
+import { daoFactory } from "../DAOFactoryInstance";
 import { handleErrors } from "../handleErrors";
 
 export const handler = async (request: IsFollowerRequest): Promise<IsFollowerResponse> => handleErrors(async () => {
 
-    const followService = new FollowService();
+    const followService = new FollowService(daoFactory);
     const isFollower = await followService.getIsFollowerStatus(request.token, request.userAlias, request.selectedUserAlias);
 
     return {

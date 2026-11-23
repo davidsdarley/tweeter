@@ -1,8 +1,15 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { FakeData, User, UserDto } from "tweeter-shared";
+import { DAOFactory } from "../../dao/DAOFactory";
 import { requireAlias, requirePositivePageSize, requireToken } from "./RequestValidation";
 
 export class FollowService {
+    private readonly daoFactory: DAOFactory;
+
+    public constructor(daoFactory: DAOFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     public async loadMoreFollowees(
         token: string,
         userAlias: string,
