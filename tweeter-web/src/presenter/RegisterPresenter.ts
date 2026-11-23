@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import { User, AuthToken } from "tweeter-shared";
 import { UserService } from "../model.service/UserService"
 import { Buffer } from "buffer";
@@ -12,14 +13,9 @@ export interface RegisterView extends LoadingView{
 
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void;
 
-    firstName: string;
-    lastName: string;
-    alias: string;
-    password: string;
-    imageBytes: Uint8Array;
-    imageFileExtension: string;
-
-    rememberMe: boolean;
+    // Form values are passed into doRegister instead of living here: the view
+    // object is captured once when the presenter is created, so any state
+    // values stored on it would stay at their first-render values.
     navigate: NavigateFunction;
 }
 
@@ -37,19 +33,27 @@ export class RegisterPresenter extends Presenter<RegisterView>{
       ): Promise<[User, AuthToken]> {
         return this.service.register(firstName, lastName, alias, password, userImageBytes, imageFileExtension)
     }
-    public async doRegister ()   {
+    public async doRegister (
+        firstName: string,
+        lastName: string,
+        alias: string,
+        password: string,
+        imageBytes: Uint8Array,
+        imageFileExtension: string,
+        rememberMe: boolean
+      ) {
       try {
         this.view.setIsLoading(true);
         await this.doFailureReportingOperation( async() => {
           const [user, authToken] = await this.register(
-            this.view.firstName,
-            this.view.lastName,
-            this.view.alias,
-            this.view.password,
-            this.view.imageBytes,
-            this.view.imageFileExtension
+            firstName,
+            lastName,
+            alias,
+            password,
+            imageBytes,
+            imageFileExtension
           );
-          this.view.updateUserInfo(user, user, authToken, this.view.rememberMe);
+          this.view.updateUserInfo(user, user, authToken, rememberMe);
           this.view.navigate(`/feed/${user.alias}`);
         }, "register user");
       } finally {

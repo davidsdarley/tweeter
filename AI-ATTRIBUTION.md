@@ -74,3 +74,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Fix build-layer.sh so the bcryptjs install no longer deletes tweeter-shared from the Lambda layer, and fix ClientCommunicator so failed requests show the server's error message instead of a blank one.
 - Review: Was trying to fix an issue where register doesn't work. After testing this, that issue was not actually fixed. This did fix real issues I didn't know about though, so changes accepted. 
+
+## 2026-11-23: tweeter-web/src/presenter/RegisterPresenter.ts, tweeter-web/src/components/authentication/register/Register.tsx, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Fix Register sending empty fields ("[bad-request] Missing user alias") by passing the current form values into RegisterPresenter.doRegister as parameters, the way Login passes them to doLogin, instead of reading them from the view captured on the first render.
+- Review: The issue is fixed, now works the same way Login does. Simple change, changes accepted.

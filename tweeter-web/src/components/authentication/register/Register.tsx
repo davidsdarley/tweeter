@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import "./Register.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { ChangeEvent, useRef, useState } from "react";
@@ -43,15 +44,6 @@ const Register = () => {
     setImageFileExtension: setImageFileExtension,
     setIsLoading: setIsLoading,
     updateUserInfo: updateUserInfo,
-
-    firstName: firstName,
-    lastName: lastName,
-    alias: alias,
-    password: password,
-    imageBytes: imageBytes,
-    imageFileExtension: imageFileExtension,
-
-    rememberMe: rememberMe,
     displayErrorMessage: displayErrorMessage,
     navigate: navigate,
   };
@@ -69,7 +61,17 @@ const Register = () => {
     presenterRef.current!.handleFileChange(event);
   };
   const doRegister = async () => {
-    presenterRef.current!.doRegister();
+    // Pass current state in directly; the presenter's view was captured on the
+    // first render and does not see later state updates.
+    presenterRef.current!.doRegister(
+      firstName,
+      lastName,
+      alias,
+      password,
+      imageBytes,
+      imageFileExtension,
+      rememberMe
+    );
   };
   // Display stuff
   const inputFieldFactory = () => {
