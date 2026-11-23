@@ -13,4 +13,4 @@ export const TABLES = {
 } as const;
 
 // TODO: replace with the real S3 bucket that holds profile images.
-export const IMAGE_BUCKET = "REPLACE-WITH-BUCKET-NAME";
+export const IMAGE_BUCKET = "tweeter-images-dsd2001";
