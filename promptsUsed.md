@@ -378,3 +378,23 @@ Done when:
 - In tweeter-web: npx tsc --noEmit passes
 
 If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
+
+## TASK 11
+Diagnose source of error causing Register to fail.
+
+Objective: Whenever Register is called in the dev server with all the proper field , we receive an error message reading "Failed to register user because of exception: Client communicator POST failed:". Find and diagnose the cause of the error, then report it to me.
+
+Read first: tweeter-web/src/App.tsx, tweeter-web/src/components/authentication/register/Register.tsx,  tweeter-web/src/presenter/RegisterPresenter, tweeter-web/src/model.service/UserService, tweeter-web/src/network/ServerFacade, tweeter-web/src/network/ClientCommunicator, and all of tweeter-server
+
+Constraints:
+- Focus on finding and diagnosing the issue, not fixing it yet.
+- You may write any tests you wish to test anything.
+- Do not change any existing files without asking permission first.
+- Do not run sam, aws, or deploy commands
+- Do not add npm dependencies
+
+
+Done when:
+- You have located which file is causing the incorrect behavior.
+
+If you have any questions about current implementations or instructions, stop and ask me. Avoid making assumptions when it is reasonable to do so.
