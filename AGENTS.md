@@ -5,8 +5,9 @@ Tweeter (Twitter clone). TypeScript monorepo:
 - tweeter-web/ — React client (MVP: presenters, services, views)
 - tweeter-shared/ — shared model classes + request/response types
 - tweeter-server/ — AWS Lambda handlers + server-side services
-Milestone 3: move service logic to Lambdas behind API Gateway; client
-calls them via ServerFacade -> ClientCommunicator. Server returns FakeData.
+Milestone 4A: replace FakeData in server services with a data access
+layer (DAOs) backed by DynamoDB and S3. Add password hashing (bcryptjs)
+and auth-token validation on every authenticated request.
 
 ## Commands
 - tweeter-shared:
@@ -18,7 +19,6 @@ calls them via ServerFacade -> ClientCommunicator. Server returns FakeData.
     - Build: npm run build
     - Test: npm run test, npx tsc --noEmit
 
-
 ## Conventions
 - All endpoints use POST; auth token goes in the JSON request body
 - Endpoint paths are /<resource>/<action>, e.g. /followees/get
@@ -28,11 +28,27 @@ calls them via ServerFacade -> ClientCommunicator. Server returns FakeData.
 - Requests/responses live in tweeter-shared and extend TweeterRequest/TweeterResponse
 - Imports: inside tweeter-shared use relative paths only; everywhere else import
   from "tweeter-shared" only, never a path into it
+- File and import names must match casing exactly (Lambda runs on Linux)
 - Use named exports, not default exports
 - Do not use the `any` type
-- Requests/responses live in tweeter-shared and extend TweeterRequest/TweeterResponse
 - Lambdas only parse the request, call a service, and build the response; no logic
-- Lambdas wrap handlers in handleErrors; thrown errors use [bad-request]/[unauthorized]/[internal-server-error] prefixes.
+- Lambdas wrap handlers in handleErrors; thrown errors use
+  [bad-request]/[unauthorized]/[internal-server-error] prefixes
+
+## Data layer
+- DAO interfaces are database-agnostic: no AWS types or imports in them
+- Services get DAOs from a DAOFactory; services never call `new` on a DAO
+- All DynamoDB/S3 code lives in the dynamo DAO package only
+- Every authenticated service method validates the token through AuthorizationService first
+- Never store or return plaintext passwords; hash with bcryptjs
+- Reuse shared helpers (e.g. paging) instead of duplicating query code
+- Tables:
+    - user: PK alias
+    - follows: PK follower_alias, SK followee_alias; GSI follows_index (PK followee_alias, SK follower_alias)
+    - story: PK alias, SK timestamp (Number)
+    - feed: PK alias (receiver), SK timestamp_alias (String "<timestamp>#<authorAlias>")
+    - authtoken: PK token; expiresAt (Number, epoch seconds, TTL)
+- Follower/followee counts are stored on the user item and updated on follow/unfollow
 
 ## Off-limits
 - Do not edit dist/, layer/, or node_modules/ (generated)
