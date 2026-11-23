@@ -498,3 +498,41 @@ Constraints:
 Done when: tweeter-server builds (npm run build).
 
 If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
+
+## TASK 4
+Implement DynamoStatusDAO in tweeter-server/src/dao/dynamo/ and return it
+from DynamoDAOFactory.
+
+Read First:
+tweeter-server/src/dao/ (interfaces), tweeter-server/src/dao/dynamo/
+(existing DAOs, DynamoConfig, and the paging helper), tweeter-shared/src
+(Status/StatusDto and User/UserDto), AGENTS.md (Data layer section for the
+story and feed tables)
+
+Requirements:
+- Inject the shared client, same as the other DAOs. Use the existing paging
+  helper for getStoryPage and getFeedPage; do not write new paging logic.
+- Each story and feed item stores a full copy of the status: post,
+  timestamp, and the author's alias, firstName, lastName, imageUrl. Pages
+  are returned as StatusDtos built from the item alone, with no extra
+  user lookups.
+- story: PK alias (author), SK timestamp (Number).
+- feed: PK alias (receiver), SK timestamp_alias (String
+  "<timestamp>#<authorAlias>"). Also store timestamp as its own Number
+  attribute. Build the SK in one helper function used for both writing
+  and building ExclusiveStartKey.
+- Both pages return newest first.
+- putFeedItems: one feed item per receiver alias, using BatchWrite in
+  chunks of 25, retrying UnprocessedItems with backoff.
+- Take the retry/backoff loop and sleep() from DynamoUserDAO and put it into a
+  shared helper in dao/dynamo/, and use it in both DynamoUserDAO and
+  DynamoStatusDAO. DynamoUserDAO's behavior must not change.
+
+Constraints:
+- Do not change the DAO interfaces. If one seems wrong, ask me first.
+- Do not change services yet.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build).
+
+If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.

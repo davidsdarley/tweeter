@@ -94,3 +94,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Implement DynamoFollowDAO (follows table and follows_index GSI) with paging in a reusable query helper that StatusDAO can use later, and return it from DynamoDAOFactory; no interface or service changes.
 - Review: Paged item logic put into newly made DynamoPaging.ts, and looks good. DynamoFollowDAO accesses both the main follow table and the reversed index part. Minimal changes to the factory, returns the dao now. All looks good, build passes. Changes accepted.
+
+## 2026-11-23: tweeter-server/src/dao/dynamo/DynamoStatusDAO.ts (new file), tweeter-server/src/dao/dynamo/DynamoBatchRetry.ts (new file), tweeter-server/src/dao/dynamo/DynamoUserDAO.ts, tweeter-server/src/dao/dynamo/DynamoDAOFactory.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Implement DynamoStatusDAO (story and feed tables, paging through the shared helper, feed fan-out with BatchWrite in chunks of 25) and return it from DynamoDAOFactory; move DynamoUserDAO's unprocessed-retry/backoff loop and sleep() into a shared helper used by both DAOs without changing UserDAO behavior.
+- Review: Retrying logic moved out of a single file, and looking good still. Factory looking good, new path built. Both status and feed things are in the same DAO and it's looking a bit big, but I don't think the switch is worth the works since I can still find everything in it. Changes accepted.

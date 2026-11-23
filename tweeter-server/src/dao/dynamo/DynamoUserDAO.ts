@@ -8,13 +8,12 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { UserDto } from "tweeter-shared";
 import { UserDAO } from "../UserDAO";
+import { retryUnprocessed } from "./DynamoBatchRetry";
 import { TABLES } from "./DynamoConfig";
 
 type Item = Record<string, unknown>;
 
 const BATCH_GET_LIMIT = 100;
-const MAX_UNPROCESSED_RETRIES = 5;
-const RETRY_BASE_DELAY_MS = 50;
 
 // Attributes safe to return to callers; never includes passwordHash.
 const USER_PROJECTION = "#alias, firstName, lastName, imageUrl";
@@ -122,35 +121,27 @@ export class DynamoUserDAO implements UserDAO {
 
     private async batchGetChunk(aliases: string[]): Promise<Item[]> {
         const results: Item[] = [];
-        let keys: Item[] = aliases.map((alias) => ({ alias }));
-        let attempt = 0;
 
-        while (keys.length > 0) {
-            if (attempt > MAX_UNPROCESSED_RETRIES) {
-                throw new Error(
-                    `[internal-server-error] BatchGet left ${keys.length} keys unprocessed after retries`
-                );
-            }
-            if (attempt > 0) {
-                await sleep(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1));
-            }
-
-            const result = await this.client.send(
-                new BatchGetCommand({
-                    RequestItems: {
-                        [this.tableName]: {
-                            Keys: keys,
-                            ProjectionExpression: USER_PROJECTION,
-                            ExpressionAttributeNames: USER_PROJECTION_NAMES,
+        await retryUnprocessed<Item>(
+            aliases.map((alias) => ({ alias })),
+            async (keys) => {
+                const result = await this.client.send(
+                    new BatchGetCommand({
+                        RequestItems: {
+                            [this.tableName]: {
+                                Keys: keys,
+                                ProjectionExpression: USER_PROJECTION,
+                                ExpressionAttributeNames: USER_PROJECTION_NAMES,
+                            },
                         },
-                    },
-                })
-            );
-
-            results.push(...(result.Responses?.[this.tableName] ?? []));
-            keys = result.UnprocessedKeys?.[this.tableName]?.Keys ?? [];
-            attempt++;
-        }
+                    })
+                );
+                results.push(...(result.Responses?.[this.tableName] ?? []));
+                return result.UnprocessedKeys?.[this.tableName]?.Keys ?? [];
+            },
+            (remaining) =>
+                `BatchGet left ${remaining} keys unprocessed after retries`
+        );
 
         return results;
     }
@@ -197,8 +188,4 @@ export class DynamoUserDAO implements UserDAO {
             imageUrl: item.imageUrl as string,
         };
     }
-}
-
-function sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
 }
