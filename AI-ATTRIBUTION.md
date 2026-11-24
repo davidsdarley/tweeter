@@ -129,3 +129,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Replace FakeData in StatusService (loadMoreStoryItems, loadMoreFeedItems, postStatus) with StatusDAO/FollowDAO and AuthorizationService, and write unit tests for it.
 - Review: StatusService now uses the DAOs exclusively. Checks for authorization, then uses appropriate DAO functions. Starst constrcuting feeds. Tests chagned to accomodate no longer expecting FakeData, and tests all pass. When testing by visiting the page basically nothing appears, as expected for this stage. Changes Accepted
+
+## 2026-11-23: tweeter-server/src/model/service/AliasUtils.ts (new file), tweeter-server/src/model/service/UserService.ts, tweeter-server/test/model/service/UserService.test.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Add a reusable normalizeAlias helper that adds a missing "@" to aliases, use it in register and login before any DAO calls (S3 file name still has no "@"), and add UserService tests for it.
+- Review: TODO

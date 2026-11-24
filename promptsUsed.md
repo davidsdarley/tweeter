@@ -773,3 +773,33 @@ Constraints:
 
 Done when: tweeter-server builds (npm run build), all tests pass
 (npm run test), and `grep -rn FakeData tweeter-server/src` returns nothing.
+
+### quick fix
+Normalize user aliases so they always start with "@".
+
+Background: a user registered as "dsd" and was stored without "@". The
+client finds aliases in links by searching for "@", so clicking that
+user sent the whole URL as the alias and getUser failed.
+
+Read First:
+tweeter-server/src (UserService, AuthorizationService),
+tweeter-server/test/ (the UserService tests and fakes), AGENTS.md
+
+Requirements:
+- Add a small helper (e.g. normalizeAlias) that adds "@" to the front if it's missing and otherwise returns the alias unchanged. Put it somewhere other services could reuse it.
+- Use it in register and login before any DAO calls, so "dsd" and "@dsd"
+  refer to the same account.
+- The S3 image file name should still strip the "@" (e.g. "dsd.png").
+
+Tests (tweeter-server/test/):
+- Registering as "dsd" stores the user as "@dsd".
+- Logging in as "dsd" and as "@dsd" both work for that user.
+- An alias that already has "@" isn't changed
+
+Constraints:
+- Only change what's needed for this fix. If something else seems wrong,
+  ask me first.
+- Do not change the DAO interfaces.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build) and all tests pass (npm run test).

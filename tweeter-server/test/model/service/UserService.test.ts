@@ -50,6 +50,38 @@ describe("UserService", () => {
 
             await expect(registerAlice()).rejects.toThrow(/^\[bad-request\]/);
         });
+
+        it("adds a missing '@' to the alias before storing the user", async () => {
+            const [user, authToken] = await service.register(
+                "Dee", "Ess", "dsd", PASSWORD, IMAGE_BYTES, "png"
+            );
+
+            expect(user.alias).toBe("@dsd");
+            expect(factory.userDAO.users.has("@dsd")).toBe(true);
+            expect(factory.userDAO.users.has("dsd")).toBe(false);
+            expect(factory.imageDAO.images.has("dsd.png")).toBe(true);
+            expect(user.imageUrl).toBe(`${FAKE_IMAGE_BASE_URL}dsd.png`);
+            expect(factory.authTokenDAO.tokens.get(authToken.token)?.alias).toBe("@dsd");
+        });
+
+        it("leaves an alias that already starts with '@' unchanged", async () => {
+            const [user] = await service.register(
+                "Dee", "Ess", "@dsd", PASSWORD, IMAGE_BYTES, "png"
+            );
+
+            expect(user.alias).toBe("@dsd");
+            expect(factory.userDAO.users.has("@dsd")).toBe(true);
+            expect(factory.userDAO.users.has("@@dsd")).toBe(false);
+            expect(factory.imageDAO.images.has("dsd.png")).toBe(true);
+        });
+
+        it("treats 'dsd' and '@dsd' as the same alias", async () => {
+            await service.register("Dee", "Ess", "dsd", PASSWORD, IMAGE_BYTES, "png");
+
+            await expect(
+                service.register("Dee", "Ess", "@dsd", PASSWORD, IMAGE_BYTES, "png")
+            ).rejects.toThrow(/^\[bad-request\]/);
+        });
     });
 
     describe("login", () => {
@@ -72,6 +104,18 @@ describe("UserService", () => {
                 INVALID_CREDENTIALS_MESSAGE
             );
             expect(INVALID_CREDENTIALS_MESSAGE).toMatch(/^\[bad-request\]/);
+        });
+
+        it("logs in with or without the '@' for a user registered as 'dsd'", async () => {
+            const [registered] = await service.register(
+                "Dee", "Ess", "dsd", PASSWORD, IMAGE_BYTES, "png"
+            );
+
+            for (const alias of ["dsd", "@dsd"]) {
+                const [user, authToken] = await service.login(alias, PASSWORD);
+                expect(user).toEqual(registered);
+                expect(factory.authTokenDAO.tokens.get(authToken.token)?.alias).toBe("@dsd");
+            }
         });
     });
 

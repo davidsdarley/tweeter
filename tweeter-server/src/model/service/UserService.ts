@@ -4,6 +4,7 @@ import { AuthTokenDto, UserDto } from "tweeter-shared";
 import { DAOFactory } from "../../dao/DAOFactory";
 import { ImageDAO } from "../../dao/ImageDAO";
 import { UserDAO } from "../../dao/UserDAO";
+import { normalizeAlias } from "./AliasUtils";
 import { AuthorizationService } from "./AuthorizationService";
 import { requireAlias, requireToken } from "./RequestValidation";
 
@@ -25,6 +26,7 @@ export class UserService {
 
     public async login(alias: string, password: string): Promise<[UserDto, AuthTokenDto]> {
         requireAlias(alias);
+        alias = normalizeAlias(alias);
 
         const passwordHash = await this.userDAO.getPasswordHash(alias);
         const passwordMatches =
@@ -51,12 +53,14 @@ export class UserService {
         imageFileExtension: string
     ): Promise<[UserDto, AuthTokenDto]> {
         requireAlias(alias);
+        alias = normalizeAlias(alias);
 
         if ((await this.userDAO.getUser(alias)) !== null) {
             throw new Error("[bad-request] Alias is already taken");
         }
 
-        const fileName = `${alias.startsWith("@") ? alias.slice(1) : alias}.${imageFileExtension}`;
+        // alias is normalized, so slice(1) drops the "@" from the S3 file name.
+        const fileName = `${alias.slice(1)}.${imageFileExtension}`;
         const imageUrl = await this.imageDAO.putImage(fileName, userImageBytes);
 
         const passwordHash = await hash(password, SALT_ROUNDS);
