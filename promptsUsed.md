@@ -803,3 +803,38 @@ Constraints:
 - Do not run anything that touches AWS.
 
 Done when: tweeter-server builds (npm run build) and all tests pass (npm run test).
+
+## TAKS 10
+Write a seed script that fills DynamoDB with test data. I will run it
+myself; do not run it.
+
+Read First:
+tweeter-server/src/dao/ (interfaces, DynamoDAOFactory, DynamoConfig),
+tweeter-server/src (UserService register, for how users are stored),
+AGENTS.md
+
+Requirements:
+- Script at tweeter-server/scripts/seed.ts, runnable with
+  `npx ts-node scripts/seed.ts` (or whatever runner is already installed;
+  ask before adding one).
+- Use the DAOs through DynamoDAOFactory. No direct DynamoDB calls in the
+  script.
+- Create about 25 users (@user1 … @user25) with password "password"
+  (hashed with bcryptjs, as register does) and one placeholder imageUrl.
+  Don't upload images.
+- Make one main user, @seeduser, who follows 15+ users and has 15+
+  followers, with follower/followee counts that match the follows table.
+- Give @seeduser 15+ statuses in their story, and post 15+ statuses from
+  users @seeduser follows, so @seeduser's feed has 15+ items. Write the
+  feed items the same way postStatus does.
+- Skip users that already exist, so the script can be rerun safely.
+- Write slowly enough for 4 WCU per table: small batches with a short pause,
+  relying on the existing retry helper.
+
+Constraints:
+- Do not change the DAO interfaces or services. If something seems
+  wrong, ask me first.
+- Do not run the script or anything that touches AWS.
+
+Done when: tweeter-server builds and the script type-checks
+(npx tsc --noEmit).

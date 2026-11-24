@@ -134,3 +134,13 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Add a reusable normalizeAlias helper that adds a missing "@" to aliases, use it in register and login before any DAO calls (S3 file name still has no "@"), and add UserService tests for it.
 - Review: TODO
+
+## 2026-11-23: tweeter-server/scripts/seed.ts (new file), tweeter-server/scripts/tsconfig.json (new file), AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Write a rerunnable seed script that fills DynamoDB through DynamoDAOFactory with 25 users plus @seeduser (15+ followees, 15+ followers, 15+ story statuses, 15+ feed items), paced for 4 WCU per table. Not run.
+- Review: IF 
+
+## 2026-11-23: tweeter-server/scripts/seed.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Extend the seed script so the @userN accounts also follow each other, with varied follower and followee counts per user.
+- Review: TODO
