@@ -12,7 +12,7 @@ export interface LoginView extends LoadingView {
     navigate: NavigateFunction;
 }
 
-export class LoginPresenter extends Presenter<LoginView>{
+export class LoginPresenter extends Presenter<LoginView> {
   private service: UserService = new UserService;
 
   public async login (alias: string, password: string): Promise<[User, AuthToken]>{
