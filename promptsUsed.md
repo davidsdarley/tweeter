@@ -838,3 +838,19 @@ Constraints:
 
 Done when: tweeter-server builds and the script type-checks
 (npx tsc --noEmit).
+
+### Fix issue
+Diagnose a bug: When I try to post a status, it creates and posts the status without the string I typed in to be posted.
+
+Read First:
+tweeter-server/src (Status related files and methods), tweeter-web/src (the presenter, service, and ServerFacade
+code that the PostStatus method goes through), tweeter-shared/src (the post status request types)
+
+Finished when:
+- You can report the root cause, with the evidence
+- You can propose a fix (files and what changes)
+- You have a unit test that would have caught it
+
+Constraints:
+- Do not change any code until I approve the fix.
+- Do not run anything that touches AWS.

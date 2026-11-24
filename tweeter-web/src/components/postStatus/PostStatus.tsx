@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import "./PostStatus.css";
 import { useRef, useState } from "react";
 import { useMessageActions } from "../toaster/MessageHooks";
@@ -15,14 +16,9 @@ const PostStatus = (props: Props) => {
   const [post, setPost] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const getPost = ():string =>{
-    return post;
-  }
-
   const view: PostStatusView = {
     setIsLoading: setIsLoading,
     displayInfoMessage: displayInfoMessage,
-    getPost: getPost,
     setPost: setPost,
     displayErrorMessage: displayErrorMessage,
     deleteMessage: deleteMessage,
@@ -35,7 +31,7 @@ const PostStatus = (props: Props) => {
   }
 
   const submitPost = async (event: React.MouseEvent) => {
-    presenterRef.current!.submitPost(event, authToken!, currentUser!)
+    presenterRef.current!.submitPost(event, post, authToken!, currentUser!)
   };
 
   const clearPost = (event: React.MouseEvent) => {

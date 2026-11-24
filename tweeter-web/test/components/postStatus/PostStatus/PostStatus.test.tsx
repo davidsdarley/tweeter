@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import { render, screen} from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import "@testing-library/jest-dom"
@@ -10,6 +11,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { PostStatusPresenter } from "../../../../src/presenter/PostStatusPresenter"
 import { anything, instance, mock, verify } from "@typestrong/ts-mockito"
+import { Status } from "tweeter-shared"
+import { StatusService } from "../../../../src/model.service/StatusService"
 library.add(fab);
 
 describe("PostStatus", () => {
@@ -52,7 +55,24 @@ describe("PostStatus", () => {
 
         await user.click(postStatusButton);
 
-        verify(mockPresenter.submitPost(anything(), anything(), anything())).once() // probably test for specific inputs
+        verify(mockPresenter.submitPost(anything(), "hello there", anything(), anything())).once()
+    });
+
+    it("sends the text the user typed to StatusService.postStatus when using the real presenter", async () => {
+        const postStatusSpy = jest
+            .spyOn(StatusService.prototype, "postStatus")
+            .mockResolvedValue(undefined);
+
+        const {postStatusButton, inputField, user} = renderPostStatusAndGetElements();
+
+        await user.type(inputField, "hello there");
+        await user.click(postStatusButton);
+
+        expect(postStatusSpy).toHaveBeenCalledTimes(1);
+        const sentStatus: Status = postStatusSpy.mock.calls[0][0];
+        expect(sentStatus.post).toBe("hello there");
+
+        postStatusSpy.mockRestore();
     });
 })
 

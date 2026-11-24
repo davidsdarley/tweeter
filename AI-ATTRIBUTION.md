@@ -154,3 +154,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Update the ServerFacade integration tests to stop expecting FakeData and instead check against the seed script's data, logging in as @seeduser for a real auth token. Not run.
 - Review: Now they are run. All pass, and now use a seed user. Checks actual stuff now, all tests appear to do what they say, and I can break them by changing values. Changes accepted.
+
+## 2026-11-24: tweeter-web/src/presenter/PostStatusPresenter.ts, tweeter-web/src/components/postStatus/PostStatus.tsx, tweeter-web/test/components/postStatus/PostStatus/PostStatus.test.tsx, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Fix posted statuses having empty text, caused by the presenter reading the post through the first render's stale view.getPost; pass the post text into submitPost instead, and add a component test with the real presenter that would have caught it.
+- Review: tested the solution in browser and it works. However now suddenly a bunch of tests are failing. OK after reviewing the test this is not due to these changes, but due to me having written overly strict tests that are now failing due to me having added new story posts. Changes accepted.
