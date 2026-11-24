@@ -1,51 +1,71 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { FakeData, Status, StatusDto } from "tweeter-shared";
+import { StatusDto } from "tweeter-shared";
 import { DAOFactory } from "../../dao/DAOFactory";
+import { FollowDAO } from "../../dao/FollowDAO";
+import { StatusDAO } from "../../dao/StatusDAO";
+import { AuthorizationService } from "./AuthorizationService";
 import { requireAlias, requirePositivePageSize, requireToken } from "./RequestValidation";
 
 export class StatusService {
-    private readonly daoFactory: DAOFactory;
+    private readonly statusDAO: StatusDAO;
+    private readonly followDAO: FollowDAO;
+    private readonly authorizationService: AuthorizationService;
 
     public constructor(daoFactory: DAOFactory) {
-        this.daoFactory = daoFactory;
+        this.statusDAO = daoFactory.getStatusDAO();
+        this.followDAO = daoFactory.getFollowDAO();
+        this.authorizationService = new AuthorizationService(daoFactory);
     }
 
+    // Returns [statuses, hasMore] from userAlias's story, newest first.
     public async loadMoreStoryItems(
         token: string,
         userAlias: string,
         pageSize: number,
-        lastItem: StatusDto | null  ): Promise<[StatusDto[], boolean]> {
+        lastItem: StatusDto | null
+    ): Promise<[StatusDto[], boolean]> {
         requireToken(token);
         requireAlias(userAlias);
         requirePositivePageSize(pageSize);
-        // TODO: Replace with the result of calling the database
-        return this.getFakeData(lastItem, pageSize);
-      };
+        await this.authorizationService.authorize(token);
 
+        return this.statusDAO.getStoryPage(userAlias, pageSize, lastItem);
+    };
+
+    // Returns [statuses, hasMore] from userAlias's feed, newest first.
     public async loadMoreFeedItems(
         token: string,
         userAlias: string,
         pageSize: number,
-        lastItem: StatusDto | null  ): Promise<[StatusDto[], boolean]> {
+        lastItem: StatusDto | null
+    ): Promise<[StatusDto[], boolean]> {
         requireToken(token);
         requireAlias(userAlias);
         requirePositivePageSize(pageSize);
-        // TODO: Replace with the result of calling the database
-        return this.getFakeData(lastItem, pageSize);
-      };
+        await this.authorizationService.authorize(token);
 
-    public async postStatus(
-        token: string,
-        newStatus: StatusDto  ): Promise<void> {
+        return this.statusDAO.getFeedPage(userAlias, pageSize, lastItem);
+    };
+
+    // Writes the status to its author's story and to each follower's feed.
+    public async postStatus(token: string, newStatus: StatusDto): Promise<void> {
         requireToken(token);
-        // TODO: Call the database to post the status
-        return Promise.resolve();
-      };
+        if (!newStatus || !newStatus.user) {
+            throw new Error("[bad-request] Missing status");
+        }
+        const authorAlias = newStatus.user.alias;
+        requireAlias(authorAlias, "status author alias");
 
-    private getFakeData(lastItem: StatusDto | null, pageSize: number): Promise<[StatusDto[], boolean]> {
-      const [items, hasMore] = FakeData.instance.getPageOfStatuses(lastItem ? Status.fromDto(lastItem) : null, pageSize);
-      const dtoItems = items.map((status) => status.toDto());
-      return Promise.resolve([dtoItems, hasMore]);
-    }
+        const tokenAlias = await this.authorizationService.authorize(token);
+        if (tokenAlias !== authorAlias) {
+            throw new Error("[unauthorized] Cannot post a status as another user");
+        }
 
+        await this.statusDAO.putStory(newStatus);
+
+        const followerAliases = await this.followDAO.getAllFollowerAliases(authorAlias);
+        if (followerAliases.length > 0) {
+            await this.statusDAO.putFeedItems(followerAliases, newStatus);
+        }
+    };
 }

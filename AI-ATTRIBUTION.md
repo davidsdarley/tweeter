@@ -124,3 +124,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Replace FakeData in FollowService (paging, counts, follow, unfollow, getIsFollowerStatus) with DAOs from the DAOFactory and AuthorizationService, and write FollowService unit tests using the existing fake DAOs and fake factory.
 - Review: Follow service heavily modified to get rid of all TODO things. Constrouctor uses injection well. GetFollowCounts completely reworked. Tests all pass. Practical visit shows that there is nothing there in the followees and followers tab, 
+
+## 2026-11-23: tweeter-server/src/model/service/StatusService.ts, tweeter-server/test/model/service/StatusService.test.ts (new file), tweeter-server/test/lambda/GetStoryLambda.test.ts, tweeter-server/test/lambda/GetFeedLambda.test.ts, tweeter-server/test/lambda/PostStatusLambda.test.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Replace FakeData in StatusService (loadMoreStoryItems, loadMoreFeedItems, postStatus) with StatusDAO/FollowDAO and AuthorizationService, and write unit tests for it.
+- Review: StatusService now uses the DAOs exclusively. Checks for authorization, then uses appropriate DAO functions. Starst constrcuting feeds. Tests chagned to accomodate no longer expecting FakeData, and tests all pass. When testing by visiting the page basically nothing appears, as expected for this stage. Changes Accepted

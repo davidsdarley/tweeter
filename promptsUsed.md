@@ -732,3 +732,44 @@ Done when: tweeter-server builds (npm run build) and all tests pass
 
 If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
 
+## TASK 9
+Replace FakeData in the status service (loadMoreStoryItems, loadMoreFeedItems,
+postStatus) with DAOs and AuthorizationService, and write unit tests for it.
+
+Read First:
+tweeter-server/src (StatusService, AuthorizationService, the status lambdas),
+tweeter-server/src/dao/ (interfaces), tweeter-server/test/ (the existing fake
+DAOs, fake factory, and service tests), tweeter-shared/src (Status/StatusDto
+and the status request/response types), AGENTS.md
+
+Requirements:
+- Every method calls authorize(token) first.
+- loadMoreStoryItems: StatusDAO.getStoryPage(userAlias, pageSize, lastItem).
+  loadMoreFeedItems: StatusDAO.getFeedPage(userAlias, pageSize, lastItem).
+  lastItem null means the first page. Return [statuses, hasMore].
+- postStatus:
+  - if the alias from authorize() doesn't match the status's author alias, throw [unauthorized] 
+  - putStory(status)
+  - getAllFollowerAliases(author alias)
+  - putFeedItems(followerAliases, status); skip it if there are no followers
+- Remove FakeData usage from this service. Nothing in tweeter-server/src should import FakeData.
+
+Tests (tweeter-server/test/):
+- Reuse the existing fake DAOs and fake factory; extend them if needed.
+- Test:
+  - story and feed pages return statuses newest first, and paging with lastItem continues where the last page ended
+  - postStatus adds the status to the author's story and to every follower's feed, and not to non-followers' feeds
+  - postStatus with no followers still writes the story
+  - posting as a different user than the token's throws [unauthorized]
+  - an invalid token throws [unauthorized]
+
+Constraints:
+- Get every DAO and AuthorizationService through the DAOFactory; no `new`
+  on DAOs.
+- Do not change the DAO interfaces or other services. If something seems
+  wrong, ask me first.
+- Use the test libraries already installed; ask before adding any.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build), all tests pass
+(npm run test), and `grep -rn FakeData tweeter-server/src` returns nothing.

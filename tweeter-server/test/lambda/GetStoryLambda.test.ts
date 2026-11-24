@@ -1,64 +1,63 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 
-import { describe, expect, it } from "@jest/globals";
+import { beforeAll, describe, expect, it, jest } from "@jest/globals";
+import { PagedStatusItemRequest, StatusDto } from "tweeter-shared";
+import { daoFactory } from "../../src/lambda/DAOFactoryInstance";
 import { handler } from "../../src/lambda/status/GetStoryLambda";
-import { FakeData, PagedStatusItemRequest, StatusDto } from "tweeter-shared";
 
-const PAGE_SIZE = 10;
-const USER_ALIAS = "general-kenobi";
+// Swap the shared Dynamo factory for the in-memory fake so no AWS calls are made.
+jest.mock("../../src/lambda/DAOFactoryInstance", () => {
+  const { FakeDAOFactory } = jest.requireActual<typeof import("../fakes/FakeDAOFactory")>(
+    "../fakes/FakeDAOFactory"
+  );
+  return { daoFactory: new FakeDAOFactory() };
+});
 
-// A status is identified by its sender, timestamp, and post (same fields Status.equals compares)
-const statusKey = (status: StatusDto): string =>
-  `${status.user.alias}|${status.timestamp}|${status.post}`;
+const VIEWER = "@allen";
+const AUTHOR = "@amy";
+const TOKEN = "allen-token";
+
+const makeStatus = (timestamp: number): StatusDto => ({
+  post: `post ${timestamp}`,
+  user: { firstName: "amy", lastName: "Test", alias: AUTHOR, imageUrl: "url" },
+  timestamp,
+});
 
 describe("GetStoryLambda", () => {
   const firstPageRequest: PagedStatusItemRequest = {
-    token: "fake-token",
-    userAlias: USER_ALIAS,
-    pageSize: PAGE_SIZE,
+    token: TOKEN,
+    userAlias: AUTHOR,
+    pageSize: 2,
     lastItem: null,
   };
 
-  it("returns a successful response with a full first page", async () => {
+  beforeAll(async () => {
+    for (const timestamp of [100, 300, 200]) {
+      await daoFactory.getStatusDAO().putStory(makeStatus(timestamp));
+    }
+    await daoFactory.getAuthTokenDAO().putToken(TOKEN, VIEWER, Math.floor(Date.now() / 1000) + 3600);
+  });
+
+  it("returns a successful response with the first page newest first", async () => {
     const response = await handler(firstPageRequest);
 
     expect(response.success).toBe(true);
     expect(response.message).toBeNull();
-    expect(response.items).toHaveLength(PAGE_SIZE);
+    expect(response.items).toEqual([makeStatus(300), makeStatus(200)]);
+    expect(response.hasMore).toBe(true);
   });
 
-  it("returns exactly the statuses FakeData provides", async () => {
-    const [expectedStatuses, expectedHasMore] =
-      FakeData.instance.getPageOfStatuses(null, PAGE_SIZE);
+  it("returns the next page when given lastItem", async () => {
+    const response = await handler({ ...firstPageRequest, lastItem: makeStatus(200) });
 
-    const response = await handler(firstPageRequest);
-
-    expect(response.items).toEqual(expectedStatuses.map((s) => s.toDto()));
-    expect(response.hasMore).toBe(expectedHasMore);
+    expect(response.items).toEqual([makeStatus(100)]);
+    expect(response.hasMore).toBe(false);
   });
 
-  it("returns a second page with no overlap when given lastItem", async () => {
-    const firstPage = await handler(firstPageRequest);
-    const firstItems = firstPage.items ?? [];
-    const lastItem = firstItems[firstItems.length - 1];
-
-    const secondPage = await handler({ ...firstPageRequest, lastItem });
-
-    expect(secondPage.success).toBe(true);
-    const secondItems = secondPage.items ?? [];
-    expect(secondItems.length).toBeGreaterThan(0);
-
-    const firstKeys = new Set(firstItems.map(statusKey));
-    for (const status of secondItems) {
-      expect(firstKeys.has(statusKey(status))).toBe(false);
-    }
-  });
-
-  it("respects a smaller pageSize", async () => {
-    const response = await handler({ ...firstPageRequest, pageSize: 3 });
-
-    expect(response.success).toBe(true);
-    expect(response.items).toHaveLength(3);
+  it("rejects an invalid token as unauthorized", async () => {
+    await expect(handler({ ...firstPageRequest, token: "bogus-token" })).rejects.toThrow(
+      /^\[unauthorized\]/
+    );
   });
 
   it("rejects a pageSize of 0 as a bad request", async () => {
