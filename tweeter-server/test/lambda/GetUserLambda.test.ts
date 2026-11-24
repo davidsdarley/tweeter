@@ -1,38 +1,51 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 
-import { describe, expect, it } from "@jest/globals";
+import { beforeAll, describe, expect, it, jest } from "@jest/globals";
+import { TweeterRequest, UserDto } from "tweeter-shared";
+import { daoFactory } from "../../src/lambda/DAOFactoryInstance";
 import { handler } from "../../src/lambda/user/GetUserLambda";
-import { FakeData, TweeterRequest } from "tweeter-shared";
+import { UserService } from "../../src/model/service/UserService";
+
+// Swap the shared Dynamo factory for the in-memory fake so no AWS calls are made.
+jest.mock("../../src/lambda/DAOFactoryInstance", () => {
+  const { FakeDAOFactory } = jest.requireActual<typeof import("../fakes/FakeDAOFactory")>(
+    "../fakes/FakeDAOFactory"
+  );
+  return { daoFactory: new FakeDAOFactory() };
+});
 
 const USER_ALIAS = "@allen";
 
 describe("GetUserLambda", () => {
-  const request: TweeterRequest = {
-    token: "fake-token",
-    userAlias: USER_ALIAS,
-  };
+  let request: TweeterRequest;
+  let registeredUser: UserDto;
 
-  it("returns a successful response", async () => {
+  beforeAll(async () => {
+    const [user, authToken] = await new UserService(daoFactory).register(
+      "Allen", "Anderson", USER_ALIAS, "password", "ZmFrZQ==", "png"
+    );
+    registeredUser = user;
+    request = { token: authToken.token, userAlias: USER_ALIAS };
+  });
+
+  it("returns a successful response with the requested user", async () => {
     const response = await handler(request);
 
     expect(response.success).toBe(true);
     expect(response.message).toBeNull();
+    expect(response.user).toEqual(registeredUser);
   });
 
-  it("returns exactly the user FakeData provides", async () => {
-    const expectedUser = FakeData.instance.findUserByAlias(USER_ALIAS);
-
-    const response = await handler(request);
-
-    expect(expectedUser).not.toBeNull();
-    expect(response.user).toEqual(expectedUser?.toDto());
+  it("rejects an unknown alias as a bad request", async () => {
+    await expect(handler({ ...request, userAlias: "@no-such-user" })).rejects.toThrow(
+      /^\[bad-request\]/
+    );
   });
 
-  it("returns a null user for an unknown alias", async () => {
-    const response = await handler({ ...request, userAlias: "@no-such-user" });
-
-    expect(response.success).toBe(true);
-    expect(response.user).toBeNull();
+  it("rejects an invalid token as unauthorized", async () => {
+    await expect(handler({ ...request, token: "bogus-token" })).rejects.toThrow(
+      /^\[unauthorized\]/
+    );
   });
 
   it("rejects a request with a missing token as a bad request", async () => {

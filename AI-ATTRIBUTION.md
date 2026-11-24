@@ -102,7 +102,7 @@
 ## 2026-11-23: N/A
 - Tool: Claude chat
 - Task: Got help figuring out how to word the image uploading task so it would include the code the project spec told me I should use, and how to direct it to use S3.
-- Revew: TODO
+- Revew: it was good :)
 
 ## 2026-11-23: tweeter-server/src/dao/s3/S3ImageDAO.ts (new file), tweeter-server/src/dao/dynamo/DynamoConfig.ts, tweeter-server/src/dao/dynamo/DynamoDAOFactory.ts, tweeter-server/tsconfig.json, AGENTS.md, AI-ATTRIBUTION.md
 - Tool: Claude Code (Claude Opus 5.5)
@@ -112,3 +112,11 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Create AuthorizationService (createSession, authorize, endSession; TOKEN_LIFETIME_SECONDS = 3600, expiresAt in epoch seconds) and give every service a DAOFactory constructor, with one shared DynamoDAOFactory instance the lambdas pass in; check template.yaml for the [unauthorized] 401 mapping. No FakeData replacement and no authorize() calls yet.
 - Review: DAOFactoryInstance set up to initialize the one factory, then passed into all the services via the lambdas. Authorization service does everything I need, lambads are not changed except for the importing and passing in the DAOFactory. Changes accepted.
+## 2026-11-23: N/A
+- Tool: Claude chat
+- Task: Got help coming up with what I wanted the tests to do in my task prompt.
+- Revew: it was good :)
+## 2026-11-23: tweeter-server/src/model/service/UserService.ts, tweeter-server/test/fakes/FakeDAOs.ts (new file), tweeter-server/test/fakes/FakeDAOFactory.ts (new file), tweeter-server/test/model/service/UserService.test.ts (new file), tweeter-server/test/lambda/LoginLambda.test.ts, tweeter-server/test/lambda/RegisterLambda.test.ts, tweeter-server/test/lambda/GetUserLambda.test.ts, tweeter-server/test/lambda/LogoutLambda.test.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Replace FakeData in UserService (login, register, logout, getUser) with DAOs from the DAOFactory, bcryptjs hashing, and AuthorizationService, and write UserService unit tests using reusable in-memory fake DAOs and a fake DAOFactory.
+- Review: Everything in UserService that had a TODO replace with actual stuff comment has now had it replaced with actual stuff! Login no longer just works, you need an actual registered account first. Register works creating a new account, and sends in and stored images appropriately. Login works AFTER registering just fine. Tests the agent wrote look pretty good, and the old tests are modified to look for actual auth tokens instead of fake ones. Changes accepted.

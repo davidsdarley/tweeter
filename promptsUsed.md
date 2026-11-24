@@ -609,8 +609,7 @@ Requirements:
   - createSession(alias): generate an AuthToken (use AuthToken.Generate()
     from tweeter-shared), store it with expiresAt, return it
   - authorize(token): return the token's alias if it exists and hasn't
-    expired, and push expiresAt forward; otherwise throw an error with the
-    [unauthorized] prefix
+    expired, and push expiresAt forward; otherwise throw an error with the [unauthorized] prefix
   - endSession(token): delete the token
 - Token lifetime is one constant: TOKEN_LIFETIME_SECONDS = 3600.
   expiresAt is in epoch seconds (not ms).
@@ -624,11 +623,56 @@ Requirements:
   existing mappings' pattern.
 
 Constraints:
-- Do not replace FakeData in the services yet, and do not call authorize()
-  from them yet.
+- Do not replace FakeData in the services yet, and do not call authorize() from them yet.
 - Do not change the DAO interfaces. If one seems wrong, ask me first.
 - Do not run anything that touches AWS.
 
 Done when: tweeter-server builds (npm run build).
 
 If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
+
+## TASK 7
+Replace FakeData in the user service (login, register, logout, getUser)
+with DAOs, bcryptjs, and AuthorizationService, and write unit tests for it.
+
+Read First:
+tweeter-server/src (UserService, AuthorizationService, the user lambdas),
+tweeter-server/src/dao/ (interfaces), tweeter-shared/src (User, AuthToken,
+the user request/response types), tweeter-server's existing test setup
+(jest config, any existing tests), AGENTS.md
+
+Requirements:
+- register:
+  - if getUser(alias) already returns a user, throw [bad-request] alias taken
+  - upload the image through ImageDAO with file name `${alias without "@"}.${imageFileExtension}`
+  - hash the password with bcryptjs (salt rounds = 10, async hash)
+  - putUser with the hash and the returned image URL
+  - createSession(alias), return the user and token
+- login:
+  - getPasswordHash(alias); bcryptjs compare (async)
+  - if the user is missing or the password is wrong, throw [bad-request] with the same message for both (don't reveal which one failed)
+  - getUser, createSession, return the user and token
+- logout: endSession(token).
+- getUser: authorize(token) first, then getUser(alias). If not found, throw [bad-request].
+- Remove FakeData usage from these methods only.
+
+Tests (tweeter-server/test/):
+- Create in-memory fake DAOs and a fake DAOFactory that returns them. Put them where later service tests can reuse them.
+- Test UserService through the fake factory, with real bcryptjs:
+  - register succeeds and stores a hashed (not plaintext) password
+  - register with a taken alias throws [bad-request]
+  - login succeeds with the right password
+  - login with a wrong password and with an unknown alias both throw
+    [bad-request] with the same message
+  - logout removes the token
+  - getUser with an invalid or expired token throws [unauthorized]
+
+Constraints:
+- Get every DAO and AuthorizationService through the DAOFactory; no `new` on DAOs.
+- Never return or log passwords or hashes.
+- Use the test libraries already installed; ask before adding any.
+- Do not change the DAO interfaces or other services. If something seems wrong, ask me first.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build) and all tests pass
+(npm run test).

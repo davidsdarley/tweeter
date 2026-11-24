@@ -1,8 +1,16 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 
-import { describe, expect, it } from "@jest/globals";
-import { handler } from "../../src/lambda/user/LogoutLambda";
+import { describe, expect, it, jest } from "@jest/globals";
 import { TweeterRequest } from "tweeter-shared";
+import { handler } from "../../src/lambda/user/LogoutLambda";
+
+// Swap the shared Dynamo factory for the in-memory fake so no AWS calls are made.
+jest.mock("../../src/lambda/DAOFactoryInstance", () => {
+  const { FakeDAOFactory } = jest.requireActual<typeof import("../fakes/FakeDAOFactory")>(
+    "../fakes/FakeDAOFactory"
+  );
+  return { daoFactory: new FakeDAOFactory() };
+});
 
 describe("LogoutLambda", () => {
   const request: TweeterRequest = {
@@ -10,7 +18,7 @@ describe("LogoutLambda", () => {
     userAlias: "",
   };
 
-  it("returns a successful response for a valid token", async () => {
+  it("returns a successful response for a token", async () => {
     const response = await handler(request);
 
     expect(response.success).toBe(true);
