@@ -153,4 +153,4 @@
 ## 2026-11-23: tweeter-web/test/network/ServerFacade.test.ts, AI-ATTRIBUTION.md
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Update the ServerFacade integration tests to stop expecting FakeData and instead check against the seed script's data, logging in as @seeduser for a real auth token. Not run.
-- Review: TODO
+- Review: Now they are run. All pass, and now use a seed user. Checks actual stuff now, all tests appear to do what they say, and I can break them by changing values. Changes accepted.
