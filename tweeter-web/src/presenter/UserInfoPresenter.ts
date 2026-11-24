@@ -22,8 +22,16 @@ export interface UserInfoView extends MessageView{
 
 
 export class UserInfoPresenter extends ToastPresenter<UserInfoView>{
-    private service: UserService = new UserService();
-    private followService: FollowService = new FollowService();
+    private _service: UserService = new UserService();
+    private _followService: FollowService = new FollowService();
+
+    public get service(): UserService {
+        return this._service;
+    }
+
+    public get followService(): FollowService {
+        return this._followService;
+    }
 
     ////// communicate with Service //////
     public async getIsFollowerStatus( user: User, selectedUser: User): Promise<boolean> {
@@ -46,28 +54,30 @@ export class UserInfoPresenter extends ToastPresenter<UserInfoView>{
     };
 
     ////// other presenter functions //////
-    public async setIsFollowerStatus () {
-      this.doFailureReportingOperation( async() => {
-        if (this.view.currentUser === this.view.displayedUser) {
+    // These take the displayed user as an argument instead of reading
+    // this.view.displayedUser: the component creates the presenter once, so the
+    // view it holds keeps the displayed user from the first render.
+    public async setIsFollowerStatus (displayedUser: User) {
+      await this.doFailureReportingOperation( async() => {
+        if (displayedUser.equals(this.view.currentUser!)) {
           this.view.setIsFollower(false);
         } else {
           this.view.setIsFollower(
-            await this.getIsFollowerStatus(this.view.currentUser!, this.view.displayedUser!),
+            await this.getIsFollowerStatus(this.view.currentUser!, displayedUser),
           );
         }
       }, "determine follower status");
     };
 
-    public setNumbFollowees = async () => {
-      this.doFailureReportingOperation(async() => {
-        this.view.setFolloweeCount(await this.getFolloweeCount(this.view.displayedUser!.alias));
+    public async setNumbFollowees (displayedUser: User) {
+      await this.doFailureReportingOperation(async() => {
+        this.view.setFolloweeCount(await this.getFolloweeCount(displayedUser.alias));
       }, "get followees count");
     };
 
-
-    public async setNumbFollowers () {
-      this.doFailureReportingOperation(async() => {
-        this.view.setFollowerCount(await this.getFollowerCount(this.view.displayedUser!.alias));
+    public async setNumbFollowers (displayedUser: User) {
+      await this.doFailureReportingOperation(async() => {
+        this.view.setFollowerCount(await this.getFollowerCount(displayedUser.alias));
       }, "get followers count");
     };
 
@@ -82,17 +92,17 @@ export class UserInfoPresenter extends ToastPresenter<UserInfoView>{
         return segments.length > 1 ? segments[0] : "/";
       };
 
-    public async followDisplayedUser (event: React.MouseEvent,): Promise<void> {
-      this.doToastOperation(event, async() => {
+    public async followDisplayedUser (event: React.MouseEvent, displayedUser: User): Promise<void> {
+      await this.doToastOperation(event, async() => {
         const [followerCount, followeeCount] = await this.follow(
           this.view.authToken!,
-          this.view.displayedUser!,
+          displayedUser,
           );
 
           this.view.setIsFollower(true);
           this.view.setFollowerCount(followerCount);
           this.view.setFolloweeCount(followeeCount);
-      }, "follow user", `Following ${this.view.displayedUser!.name}...`);
+      }, "follow user", `Following ${displayedUser.name}...`);
     };
 
     private async follow (
@@ -104,17 +114,18 @@ export class UserInfoPresenter extends ToastPresenter<UserInfoView>{
 
     public async unfollowDisplayedUser (
         event: React.MouseEvent,
+        displayedUser: User,
       ): Promise<void> {
-        this.doToastOperation(event, async() => {
+        await this.doToastOperation(event, async() => {
           const [followerCount, followeeCount] = await this.unfollow(
             this.view.authToken!,
-            this.view.displayedUser!,
+            displayedUser,
           );
     
           this.view.setIsFollower(false);
           this.view.setFollowerCount(followerCount);
           this.view.setFolloweeCount(followeeCount);
-        }, "unfollow user", `Unfollowing ${this.view.displayedUser!.name}...`);
+        }, "unfollow user", `Unfollowing ${displayedUser.name}...`);
       };
     
       private async unfollow (

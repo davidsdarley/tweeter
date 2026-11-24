@@ -138,9 +138,14 @@
 ## 2026-11-23: tweeter-server/scripts/seed.ts (new file), tweeter-server/scripts/tsconfig.json (new file), AI-ATTRIBUTION.md
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Write a rerunnable seed script that fills DynamoDB through DynamoDAOFactory with 25 users plus @seeduser (15+ followees, 15+ followers, 15+ story statuses, 15+ feed items), paced for 4 WCU per table. Not run.
-- Review: IF 
+- Review: If it works, it's good. It does not. Changes needed before accepting. 
 
 ## 2026-11-23: tweeter-server/scripts/seed.ts, AI-ATTRIBUTION.md
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Extend the seed script so the @userN accounts also follow each other, with varied follower and followee counts per user.
-- Review: TODO
+- Review: Script works now!
+
+## 2026-11-23: tweeter-web/src/presenter/UserInfoPresenter.ts, tweeter-web/src/components/userInfo/UserInfoComponent.tsx, tweeter-web/test/presenter/UserInfoPresenter.test.ts (new file), AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Fix follower/followee counts always showing the logged-in user's counts (18/18) on every user's page, caused by the presenter keeping the first render's view, and add a presenter unit test that would have caught it.
+- Review: Fixed my misuse of MVP. Changes approved.

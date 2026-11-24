@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import "./UserInfoComponent.css";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -44,34 +45,27 @@ const UserInfo = () => {
     setDisplayedUser(currentUser!);
   }
 
+  // Pass this render's displayedUser: the presenter is created once and its
+  // view still holds the displayed user from the first render.
   useEffect(() => {
-    setIsFollowerStatus();
-    setNumbFollowees();
-    setNumbFollowers();
+    if (!displayedUser) {
+      return;
+    }
+    presenterRef.current!.setIsFollowerStatus(displayedUser);
+    presenterRef.current!.setNumbFollowees(displayedUser);
+    presenterRef.current!.setNumbFollowers(displayedUser);
   }, [displayedUser]);
-
-  const setIsFollowerStatus = async () => {
-    presenterRef.current!.setIsFollowerStatus()
-  };
-
-  const setNumbFollowees = async () => {
-    presenterRef.current!.setNumbFollowees();
-  };
-
-  const setNumbFollowers = async () => {
-    presenterRef.current!.setNumbFollowers();
-  };
 
   const switchToLoggedInUser = (event: React.MouseEvent): void => {
     presenterRef.current!.switchToLoggedInUser(event);
   };
 
   const followDisplayedUser = async (event: React.MouseEvent,): Promise<void> => {
-    presenterRef.current!.followDisplayedUser(event);
+    presenterRef.current!.followDisplayedUser(event, displayedUser!);
   };
 
   const unfollowDisplayedUser = async (event: React.MouseEvent,): Promise<void> => {
-    presenterRef.current!.unfollowDisplayedUser(event);
+    presenterRef.current!.unfollowDisplayedUser(event, displayedUser!);
   };
 
   return (
