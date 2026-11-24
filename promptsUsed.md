@@ -676,3 +676,59 @@ Constraints:
 
 Done when: tweeter-server builds (npm run build) and all tests pass
 (npm run test).
+
+If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
+
+
+## TASK 8
+Replace FakeData in the follow service (loadMoreFollowees, loadMoreFollowers,
+getFolloweeCount, getFollowerCount, follow, unfollow, getIsFollowerStatus)
+with DAOs and AuthorizationService, and write unit tests for it.
+
+Read First:
+tweeter-server/src (FollowService, AuthorizationService, the follow lambdas),
+tweeter-server/src/dao/ (interfaces), tweeter-server/test/ (the existing fake
+DAOs, fake factory, and UserService tests), tweeter-shared/src (the follow
+request/response types)
+
+Requirements:
+- Every method calls authorize(token) first.
+- follow and unfollow use the alias returned by authorize() as the follower.
+- loadMoreFollowees/loadMoreFollowers:
+  - get one page of aliases from FollowDAO (lastItem null means first page;
+    otherwise pass lastItem.alias)
+  - get the users with UserDAO.getUsers, in the same order
+  - return [users, hasMore]
+- Counts come from UserDAO.getFollowerCount/getFolloweeCount.
+- follow:
+  - if already following, do nothing (counts must not change twice)
+  - otherwise putFollow, increment the followee's followerCount, and
+    increment the follower's followeeCount
+- unfollow: the reverse. If not following, do nothing.
+- Return whatever the existing response types expect (e.g. updated counts).
+- Remove FakeData usage from this service.
+
+Tests (tweeter-server/test/):
+- Reuse the existing fake DAOs and fake factory; extend them if needed.
+- Test:
+  - followee and follower pages return the right users in order, and
+    paging with lastItem continues where the last page ended
+  - follow updates both counts; following twice doesn't double-count
+  - unfollow updates both counts; unfollowing when not following changes
+    nothing
+  - getIsFollowerStatus is true after follow and false after unfollow
+  - an invalid token throws [unauthorized]
+
+Constraints:
+- Get every DAO and AuthorizationService through the DAOFactory; no `new`
+  on DAOs.
+- Do not change the DAO interfaces or other services. If something seems
+  wrong, ask me first.
+- Use the test libraries already installed; ask before adding any.
+- Do not run anything that touches AWS.
+
+Done when: tweeter-server builds (npm run build) and all tests pass
+(npm run test).
+
+If you have any questions about current implementations or anything seems wrong, stop and ask me before continuing or trying to fix it.
+

@@ -1,40 +1,68 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-// AI-assisted: I got help from claude writing the tests. 
 
-import { describe, expect, it } from "@jest/globals";
+import { beforeAll, describe, expect, it, jest } from "@jest/globals";
+import { PagedUserItemRequest, UserDto } from "tweeter-shared";
+import { daoFactory } from "../../src/lambda/DAOFactoryInstance";
 import { handler } from "../../src/lambda/follow/GetFolloweesLambda";
-import { FakeData, PagedUserItemRequest } from "tweeter-shared";
 
-const PAGE_SIZE = 10;
+// Swap the shared Dynamo factory for the in-memory fake so no AWS calls are made.
+jest.mock("../../src/lambda/DAOFactoryInstance", () => {
+  const { FakeDAOFactory } = jest.requireActual<typeof import("../fakes/FakeDAOFactory")>(
+    "../fakes/FakeDAOFactory"
+  );
+  return { daoFactory: new FakeDAOFactory() };
+});
+
+const USER_ALIAS = "@allen";
+const TOKEN = "allen-token";
+const OTHER_ALIASES = ["@amy", "@bob", "@cat"];
+
+const makeUser = (alias: string): UserDto => ({
+  firstName: alias.slice(1),
+  lastName: "Test",
+  alias,
+  imageUrl: "url",
+});
 
 describe("GetFolloweesLambda", () => {
-  // Shared starting request; individual tests tweak copies of it
-  const firstPageRequest = {
-    token: "fake-token",
-    userAlias: "general-kenobi",
-    pageSize: PAGE_SIZE,
+  const firstPageRequest: PagedUserItemRequest = {
+    token: TOKEN,
+    userAlias: USER_ALIAS,
+    pageSize: 2,
     lastItem: null,
   };
 
-  it("returns a successful response with a full page", async () => {
+  beforeAll(async () => {
+    for (const alias of [USER_ALIAS, ...OTHER_ALIASES]) {
+      await daoFactory.getUserDAO().putUser(makeUser(alias), "hash");
+    }
+    for (const alias of OTHER_ALIASES) {
+      await daoFactory.getFollowDAO().putFollow(USER_ALIAS, alias);
+    }
+    await daoFactory.getAuthTokenDAO().putToken(TOKEN, USER_ALIAS, Math.floor(Date.now() / 1000) + 3600);
+  });
+
+  it("returns a successful response with the first page", async () => {
     const response = await handler(firstPageRequest);
 
     expect(response.success).toBe(true);
-    expect(response.items).toHaveLength(PAGE_SIZE);
+    expect(response.message).toBeNull();
+    expect(response.items).toEqual([makeUser("@amy"), makeUser("@bob")]);
+    expect(response.hasMore).toBe(true);
   });
 
-//   it("returns exactly the users FakeData provides", async () => {
-//     // Arrange: compute what the answer SHOULD be
-//     const [expectedUsers, expectedHasMore] =
-//       FakeData.instance.getPageOfUsers(null, 10, "@allen");
+  it("returns the next page when given lastItem", async () => {
+    const response = await handler({ ...firstPageRequest, lastItem: makeUser("@bob") });
 
-//     // Act
-//     const response = await handler(firstPageRequest);
+    expect(response.items).toEqual([makeUser("@cat")]);
+    expect(response.hasMore).toBe(false);
+  });
 
-//     // Assert: compare real contents, not just "something came back"
-//     expect(response.items).toEqual(expectedUsers.map((u) => u.dto));
-//     expect(response.hasMore).toBe(expectedHasMore);
-//   });
+  it("rejects an invalid token as unauthorized", async () => {
+    await expect(handler({ ...firstPageRequest, token: "bogus-token" })).rejects.toThrow(
+      /^\[unauthorized\]/
+    );
+  });
 
   it("rejects a pageSize of 0 as a bad request", async () => {
     await expect(handler({ ...firstPageRequest, pageSize: 0 })).rejects.toThrow(
