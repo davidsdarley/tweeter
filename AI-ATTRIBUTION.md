@@ -149,3 +149,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Fix follower/followee counts always showing the logged-in user's counts (18/18) on every user's page, caused by the presenter keeping the first render's view, and add a presenter unit test that would have caught it.
 - Review: Fixed my misuse of MVP. Changes approved.
+
+## 2026-11-23: tweeter-web/test/network/ServerFacade.test.ts, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Update the ServerFacade integration tests to stop expecting FakeData and instead check against the seed script's data, logging in as @seeduser for a real auth token. Not run.
+- Review: TODO
