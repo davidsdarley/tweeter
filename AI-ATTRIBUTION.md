@@ -159,3 +159,8 @@
 - Tool: Claude Code (Claude Opus 5.5)
 - Task: Fix posted statuses having empty text, caused by the presenter reading the post through the first render's stale view.getPost; pass the post text into submitPost instead, and add a component test with the real presenter that would have caught it.
 - Review: tested the solution in browser and it works. However now suddenly a bunch of tests are failing. OK after reviewing the test this is not due to these changes, but due to me having written overly strict tests that are now failing due to me having added new story posts. Changes accepted.
+
+## 2026-11-24: tweeter-web/src/presenter/PostStatusPresenter.ts, tweeter-web/src/components/postStatus/PostStatus.tsx, AI-ATTRIBUTION.md
+- Tool: Claude Code (Claude Opus 5.5)
+- Task: Remove the stale isLoading field from PostStatusView, which meant also removing the unused oldcheckButtonStatus method, the only code that read it.
+- Review: TODO

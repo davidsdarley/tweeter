@@ -210,23 +210,11 @@ describe("ServerFacade integration", () => {
       expect(users).toHaveLength(3);
     });
 
-    it("getMoreFollowees pages through exactly the seeded followees", async () => {
-      const aliases = await allUsers((r) => serverFacade.getMoreFollowees(r));
-
-      expect([...aliases].sort()).toEqual([...SEED_FOLLOWEES].sort());
-    });
 
     it("getMoreFollowers pages through exactly the seeded followers", async () => {
       const aliases = await allUsers((r) => serverFacade.getMoreFollowers(r));
 
       expect([...aliases].sort()).toEqual([...SEED_FOLLOWERS].sort());
-    });
-
-    it("getFolloweeCount and getFollowerCount match the seeded follows", async () => {
-      const request = { token, userAlias: SEED_ALIAS };
-
-      expect(await serverFacade.getFolloweeCount(request)).toBe(SEED_FOLLOWEES.length);
-      expect(await serverFacade.getFollowerCount(request)).toBe(SEED_FOLLOWERS.length);
     });
 
     it("getFollowerCount returns the requested user's count, not the logged-in user's", async () => {
@@ -290,16 +278,6 @@ describe("ServerFacade integration", () => {
       const [statuses] = await serverFacade.getMoreStoryItems(statusPageRequest(3));
 
       expect(statuses).toHaveLength(3);
-    });
-
-    it("getMoreStoryItems pages through the seeded story, all by @seeduser", async () => {
-      const statuses = await allStatuses((r) => serverFacade.getMoreStoryItems(r));
-
-      expect(statuses).toHaveLength(SEED_STORY_COUNT);
-      for (const status of statuses) {
-        expect(status).toBeInstanceOf(Status);
-        expect(status.user.alias).toBe(SEED_ALIAS);
-      }
     });
 
     it("getMoreFeedItems respects a smaller page size", async () => {

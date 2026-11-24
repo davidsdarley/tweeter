@@ -6,7 +6,6 @@ import { StatusService } from "../model.service/StatusService";
 
 export interface PostStatusView extends LoadingView{
     setPost: React.Dispatch<React.SetStateAction<string>>
-    isLoading: boolean
 }
 
 export class PostStatusPresenter extends ToastPresenter<PostStatusView>{
@@ -53,9 +52,6 @@ export class PostStatusPresenter extends ToastPresenter<PostStatusView>{
     
       public checkButtonStatus: (post: string, authToken: AuthToken, currentUser: User) => boolean = (post:string, authToken, currentUser) => {
         return !post.trim() ;
-      };
-      public oldcheckButtonStatus: (post: string, authToken: AuthToken, currentUser: User) => boolean = (post:string, authToken, currentUser) => {
-        return !post.trim() || !authToken || !currentUser || this.view.isLoading;
       };
 
       public get service(){

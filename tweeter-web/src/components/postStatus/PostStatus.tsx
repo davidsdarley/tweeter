@@ -22,7 +22,6 @@ const PostStatus = (props: Props) => {
     setPost: setPost,
     displayErrorMessage: displayErrorMessage,
     deleteMessage: deleteMessage,
-    isLoading: isLoading
   }
 
   const presenterRef = useRef<PostStatusPresenter | null>(null);
